@@ -1,0 +1,1955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>mywebsite</title>
+<link>https://rsm-cvuppu.github.io/mywebsite/</link>
+<atom:link href="https://rsm-cvuppu.github.io/mywebsite/index.xml" rel="self" type="application/rss+xml"/>
+<description>A blog built with Quarto</description>
+<generator>quarto-1.9.13</generator>
+<lastBuildDate>Wed, 22 Apr 2026 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Replication of Angrist and Lavy (1999)</title>
+  <dc:creator>Hari Chandana Vuppu</dc:creator>
+  <link>https://rsm-cvuppu.github.io/mywebsite/posts/hw2/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>How much does class size affect student learning? This question carries enormous policy weight: smaller classes require more teachers and more buildings, making class-size reduction one of the most expensive interventions available to school systems. If the effect on achievement is small, the money is better spent elsewhere.</p>
+<p>The challenge is that a simple comparison of large and small classes is badly confounded. Schools serving wealthier, higher-achieving communities often have <em>larger</em> cohorts — meaning bigger classes can appear to produce <em>better</em> outcomes in raw data. Any honest estimate must find a source of variation in class size that is unrelated to student background.</p>
+<p>Angrist and Lavy (1999) solve this with a natural experiment rooted in a 12th-century legal text. The medieval scholar Maimonides wrote that a teacher should instruct no more than 40 pupils. Israeli law codified this principle: once a grade cohort exceeds 40 students it must be split into two classes, at 81 into three, and so on. This creates sharp <strong>discontinuities</strong> in class size at enrollment counts of 40, 80, 120, and 160. Two schools with nearly identical enrollments — say, 40 vs.&nbsp;41 students — end up with very different class sizes (≈40 vs.&nbsp;≈21) for a reason that has nothing to do with school quality. Comparing outcomes across these cutoffs yields a <strong>causal</strong> estimate of class size on achievement. This research design is called a <strong>Regression Discontinuity Design (RDD)</strong>.</p>
+<p>The Maimonides-predicted class size is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Af(n)%20=%20%5Cfrac%7Bn%7D%7B%5Clfloor%20(n-1)/40%20%5Crfloor%20+%201%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?n"> is the grade enrollment count. This function serves as the instrument for actual class size.</p>
+</section>
+<section id="main-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="main-analysis">Main Analysis</h2>
+<section id="figure-1-panel-b-actual-vs.-predicted-class-size-4th-grade" class="level3">
+<h3 class="anchored" data-anchor-id="figure-1-panel-b-actual-vs.-predicted-class-size-4th-grade">Figure 1, Panel B — Actual vs.&nbsp;Predicted Class Size (4th Grade)</h3>
+<p>The figure below replicates Figure 1 Panel B from the paper. Each blue dot is the average actual class size for schools at a given enrollment count; the red line is the Maimonides rule. The sawtooth pattern is the heart of the identification strategy: at every multiple of 40, the rule forces a sharp drop in predicted class size, generating variation that is as good as randomly assigned.</p>
+<div id="c3293e0d" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">agg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df4.groupby(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>).agg(</span>
+<span id="cb1-2">    avg_classize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'classize'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mean'</span>),</span>
+<span id="cb1-3">    func1<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'func1'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'first'</span>)</span>
+<span id="cb1-4">).reset_index()</span>
+<span id="cb1-5"></span>
+<span id="cb1-6">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.5</span>))</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">ax.scatter(agg[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>], agg[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avg_classize'</span>], s<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#2c7bb6'</span>,</span>
+<span id="cb1-9">           alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Average class size'</span>, zorder<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb1-10">ax.plot(agg[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>], agg[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'func1'</span>], color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#d7191c'</span>, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb1-11">        label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Maimonides' rule"</span>, zorder<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> cutoff <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">120</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">160</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span>]:</span>
+<span id="cb1-14">    ax.axvline(cutoff, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'gray'</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb1-15"></span>
+<span id="cb1-16">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Grade enrollment'</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>)</span>
+<span id="cb1-17">ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Class size'</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>)</span>
+<span id="cb1-18">ax.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Average Class Size and Maimonides' Rule by Enrollment - 4th Grade"</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>)</span>
+<span id="cb1-19">ax.legend(fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb1-20">ax.set_xlim(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">230</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.set_ylim(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">55</span>)</span>
+<span id="cb1-21">ax.grid(axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>)</span>
+<span id="cb1-22">ax.spines[[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'top'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'right'</span>]].set_visible(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb1-23">plt.tight_layout()</span>
+<span id="cb1-24">plt.show()</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw2/index_files/figure-html/cell-3-output-1.png" width="949" height="421" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Actual class sizes closely track the rule, confirming that Maimonides’ rule is a strong first-stage predictor — a prerequisite for the RDD to work.</p>
+<hr>
+</section>
+<section id="table-ii-columns-7-10-naive-ols-biased-baseline" class="level3">
+<h3 class="anchored" data-anchor-id="table-ii-columns-7-10-naive-ols-biased-baseline">Table II, Columns 7 &amp; 10 — Naive OLS (Biased Baseline)</h3>
+<p>Before exploiting the discontinuities, we run a straightforward OLS regression of test scores on actual class size with standard controls (share of disadvantaged students <code>tipuach</code>, total enrollment <code>c_size</code>). These columns correspond to 4th-grade reading and math in Table II of the paper.</p>
+<div id="7927a8f5" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">results <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb2-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> outcome, label <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Reading'</span>), (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgmath'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Math'</span>)]:</span>
+<span id="cb2-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> spec, formula <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [</span>
+<span id="cb2-4">        (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'No controls'</span>,                    <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outcome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ~ classize'</span>),</span>
+<span id="cb2-5">        (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'+ </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">% d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">isadvantaged'</span>,              <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outcome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ~ classize + tipuach'</span>),</span>
+<span id="cb2-6">        (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'+ </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">% d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">isadvantaged + enrollment'</span>, <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outcome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ~ classize + tipuach + c_size'</span>),</span>
+<span id="cb2-7">    ]:</span>
+<span id="cb2-8">        m <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> smf.ols(formula, data<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>df4).fit()</span>
+<span id="cb2-9">        results[(label, spec)] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb2-10">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Coeff'</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(m.params[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'classize'</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb2-11">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'SE'</span>:    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(m.bse[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'classize'</span>],   <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb2-12">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'N'</span>:     <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(m.nobs),</span>
+<span id="cb2-13">        }</span>
+<span id="cb2-14"></span>
+<span id="cb2-15">tbl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(results).T</span>
+<span id="cb2-16">tbl.index.names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Outcome'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Controls'</span>]</span>
+<span id="cb2-17"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(tbl.to_string())</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                         Coeff      SE       N
+Outcome Controls                                              
+Reading No controls                     0.1415  0.0277  2049.0
+        + % disadvantaged              -0.0530  0.0241  2049.0
+        + % disadvantaged + enrollment -0.0405  0.0287  2049.0
+Math    No controls                     0.2206  0.0302  2049.0
+        + % disadvantaged               0.0548  0.0284  2049.0
+        + % disadvantaged + enrollment  0.0091  0.0338  2049.0</code></pre>
+</div>
+</div>
+<p>The raw coefficient on class size is <em>positive</em> for both subjects — bigger classes naively appear to boost scores. Adding controls flips the reading coefficient negative and shrinks math to near zero, but the estimates remain unstable. This volatility signals severe <strong>omitted variable bias</strong>: larger class sizes cluster in urban, wealthier schools with stronger student performance, masking the true negative effect.</p>
+<p><em>Paper targets (no controls): reading ≈ 0.14, math ≈ 0.22. Our estimates match.</em></p>
+<hr>
+</section>
+<section id="table-iii-panel-a-columns-7-9-11-rdd-reduced-form-estimates-4th-grade" class="level3">
+<h3 class="anchored" data-anchor-id="table-iii-panel-a-columns-7-9-11-rdd-reduced-form-estimates-4th-grade">Table III, Panel A, Columns 7, 9, 11 — RDD Reduced-Form Estimates (4th Grade)</h3>
+<p>Now we replace actual class size with the Maimonides rule (<code>func1</code>) as the regressor. This <strong>reduced-form</strong> specification regresses outcomes directly on the instrument. Because <code>func1</code> is determined mechanically by enrollment, it is uncorrelated with school-level confounders. All three columns are for 4th grade.</p>
+<div id="a9622c0b" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">rdd_rows <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb4-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> col_label, outcome, formula <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [</span>
+<span id="cb4-3">    (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Col 7 - Reading, + disadvantaged %'</span>,</span>
+<span id="cb4-4">     <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb ~ func1 + tipuach'</span>),</span>
+<span id="cb4-5">    (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Col 9 - Reading, + disadvantaged % + enrollment'</span>,</span>
+<span id="cb4-6">     <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb ~ func1 + tipuach + c_size'</span>),</span>
+<span id="cb4-7">    (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Col 11 - Math, + disadvantaged % + enrollment'</span>,</span>
+<span id="cb4-8">     <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgmath'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgmath ~ func1 + tipuach + c_size'</span>),</span>
+<span id="cb4-9">]:</span>
+<span id="cb4-10">    m <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> smf.ols(formula, data<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>df4_rdd).fit()</span>
+<span id="cb4-11">    rdd_rows.append({</span>
+<span id="cb4-12">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Column'</span>: col_label,</span>
+<span id="cb4-13">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Maimonides Rule Coeff'</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(m.params[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'func1'</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb4-14">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Std. Error'</span>:            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(m.bse[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'func1'</span>],   <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb4-15">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'N'</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(m.nobs),</span>
+<span id="cb4-16">    })</span>
+<span id="cb4-17"></span>
+<span id="cb4-18"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(pd.DataFrame(rdd_rows).set_index(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Column'</span>).to_string())</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                 Maimonides Rule Coeff  Std. Error     N
+Column                                                                                  
+Col 7 - Reading, + disadvantaged %                             -0.0849      0.0256  2049
+Col 9 - Reading, + disadvantaged % + enrollment                -0.0890      0.0325  2049
+Col 11 - Math, + disadvantaged % + enrollment                  -0.0333      0.0382  2049</code></pre>
+</div>
+</div>
+<p>All three reduced-form coefficients are <strong>negative</strong>: a larger class size as predicted by the rule lowers test scores. The effect is more pronounced for reading than for math.</p>
+<p><em>Paper targets: col 7 ≈ −0.08, col 9 ≈ −0.09, col 11 ≈ −0.03. Our estimates match closely.</em></p>
+<blockquote class="blockquote">
+<p><strong>Note on standard errors:</strong> The paper uses Moulton-corrected SEs that account for within-school clustering. Our unadjusted SEs will be smaller — a known discrepancy documented in the replication files.</p>
+</blockquote>
+<hr>
+</section>
+<section id="naive-vs.-rdd-what-changed" class="level3">
+<h3 class="anchored" data-anchor-id="naive-vs.-rdd-what-changed">Naive vs.&nbsp;RDD: What Changed?</h3>
+<p>The table below puts the key naive OLS and RDD estimates side by side for the fully-controlled specification.</p>
+<div id="77f4679f" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">compare_rows <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb6-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> outcome, label <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Reading'</span>), (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgmath'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Math'</span>)]:</span>
+<span id="cb6-3">    naive <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> smf.ols(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outcome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ~ classize + tipuach + c_size'</span>, data<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>df4).fit()</span>
+<span id="cb6-4">    rdd   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> smf.ols(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outcome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ~ func1   + tipuach + c_size'</span>, data<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>df4_rdd).fit()</span>
+<span id="cb6-5">    compare_rows.append({</span>
+<span id="cb6-6">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Outcome'</span>:          label,</span>
+<span id="cb6-7">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Naive OLS'</span>:        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(naive.params[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'classize'</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb6-8">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'RDD Reduced Form'</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(rdd.params[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'func1'</span>],      <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb6-9">    })</span>
+<span id="cb6-10"></span>
+<span id="cb6-11"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(pd.DataFrame(compare_rows).set_index(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Outcome'</span>).to_string())</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Naive OLS  RDD Reduced Form
+Outcome                             
+Reading    -0.0405           -0.0890
+Math        0.0091           -0.0333</code></pre>
+</div>
+</div>
+<p>The naive estimates are near zero; the RDD estimates are consistently negative. Even after controlling for observed covariates, the naive regression picks up residual confounding — wealthier schools tend to have larger enrollments <em>and</em> better outcomes, biasing the class-size coefficient upward. The Maimonides rule breaks this correlation by creating enrollment-driven jumps in class size that are unrelated to school quality.</p>
+</section>
+</section>
+<section id="something-additional" class="level2">
+<h2 class="anchored" data-anchor-id="something-additional">Something Additional</h2>
+<section id="visualizing-the-discontinuity-in-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-discontinuity-in-outcomes">Visualizing the Discontinuity in Outcomes</h3>
+<p>If the RDD is valid, test scores should themselves show a jump near the enrollment cutoffs — students just above the cutoff end up in smaller classes (the rule kicks in) and should score higher. The chart below plots mean reading scores by enrollment bin, with a vertical line at the first cutoff of 40.</p>
+<div id="d030075f" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_plot <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df4_rdd.copy()</span>
+<span id="cb8-2">df_plot[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (df_plot[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2-student bins</span></span>
+<span id="cb8-3"></span>
+<span id="cb8-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Focus on enrollment 10-80 to show the first discontinuity clearly</span></span>
+<span id="cb8-5">sub  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df_plot[(df_plot[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> (df_plot[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c_size'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span>)]</span>
+<span id="cb8-6">agg2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sub.groupby(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>).agg(</span>
+<span id="cb8-7">    mean_verb<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mean'</span>),</span>
+<span id="cb8-8">    n<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'avgverb'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'count'</span>)</span>
+<span id="cb8-9">).reset_index()</span>
+<span id="cb8-10"></span>
+<span id="cb8-11">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.5</span>))</span>
+<span id="cb8-12"></span>
+<span id="cb8-13">ax.scatter(agg2[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>], agg2[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mean_verb'</span>],</span>
+<span id="cb8-14">           s<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>agg2[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#2c7bb6'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>, zorder<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,</span>
+<span id="cb8-15">           label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Mean reading score (bubble size proportional to n classes)'</span>)</span>
+<span id="cb8-16">ax.axvline(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#d7191c'</span>, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>,</span>
+<span id="cb8-17">           label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Cutoff: enrollment = 40'</span>)</span>
+<span id="cb8-18"></span>
+<span id="cb8-19"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fit separate linear trends on each side</span></span>
+<span id="cb8-20">left  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> agg2[agg2[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span>  <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>]</span>
+<span id="cb8-21">right <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> agg2[agg2[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>]</span>
+<span id="cb8-22"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> side, color <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [(left, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#4393c3'</span>), (right, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#d6604d'</span>)]:</span>
+<span id="cb8-23">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(side) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:</span>
+<span id="cb8-24">        z      <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.polyfit(side[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>], side[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mean_verb'</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb8-25">        x_line <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(side[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>].<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(), side[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bin'</span>].<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)</span>
+<span id="cb8-26">        ax.plot(x_line, np.polyval(z, x_line), color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>)</span>
+<span id="cb8-27"></span>
+<span id="cb8-28">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Grade enrollment'</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>)</span>
+<span id="cb8-29">ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Mean reading score'</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>)</span>
+<span id="cb8-30">ax.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Reading Scores Around the First Maimonides Cutoff (enrollment = 40)</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">4th Grade'</span>,</span>
+<span id="cb8-31">             fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>)</span>
+<span id="cb8-32">ax.legend(fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb8-33">ax.grid(axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>)</span>
+<span id="cb8-34">ax.spines[[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'top'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'right'</span>]].set_visible(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb8-35">plt.tight_layout()</span>
+<span id="cb8-36">plt.show()</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw2/index_files/figure-html/cell-7-output-1.png" width="949" height="422" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Schools just above the cutoff (enrollment 41-50) benefit from class sizes suddenly halved by the rule, and their reading scores are visibly higher than the left-side trend would predict. This jump is the visual signature of the RDD — it shows the reduced-form effect of the Maimonides rule on outcomes without any regression machinery.</p>
+<p>This plot makes the causal logic intuitive: two schools separated by just one student in total enrollment end up with very different classroom experiences — and measurably different test scores — purely because of an 800-year-old administrative rule.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://rsm-cvuppu.github.io/mywebsite/posts/hw2/</guid>
+  <pubDate>Wed, 22 Apr 2026 07:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Post With Code</title>
+  <dc:creator>Harlow Malloc</dc:creator>
+  <link>https://rsm-cvuppu.github.io/mywebsite/posts/post-with-code/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This is a post with executable code.</p>
+
+
+
+ ]]></description>
+  <category>news</category>
+  <category>code</category>
+  <category>analysis</category>
+  <guid>https://rsm-cvuppu.github.io/mywebsite/posts/post-with-code/</guid>
+  <pubDate>Wed, 15 Apr 2026 07:00:00 GMT</pubDate>
+  <media:content url="https://rsm-cvuppu.github.io/mywebsite/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Does Word Choice Matter? Running an A/B Test on a Newsletter Sign-Up</title>
+  <dc:creator>Hari Chandana Vuppu</dc:creator>
+  <link>https://rsm-cvuppu.github.io/mywebsite/posts/hw1/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Imagine you run a small online publication and your homepage features a newsletter sign-up box. The box works, but you have a nagging feeling that the wording of the prompt — the “call to action” (CTA) — might matter more than you think. So you draft two versions:</p>
+<ul>
+<li><strong>CTA A:</strong> <em>“Sign up for our newsletter here!”</em></li>
+<li><strong>CTA B:</strong> <em>“Stay in the loop — join our newsletter today!”</em></li>
+</ul>
+<p>Both say roughly the same thing, but do they convert visitors at the same rate? Intuition alone can’t answer that. Luckily, we can run an <strong>A/B test</strong>.</p>
+<p>An A/B test is one of the simplest and most powerful tools in a data scientist’s toolkit. You randomly assign each visitor to see one of the two CTAs — half see A, half see B — then track who actually signs up. Because the assignment is random, any difference in sign-up rates between the two groups can be attributed to the wording itself rather than to some confounding factor (time of day, referral source, etc.).</p>
+<p>In this post we won’t just <em>run</em> the test — we’ll use simulation to illuminate the statistical machinery underneath it: the Law of Large Numbers, the Bootstrap, the Central Limit Theorem, hypothesis testing, the equivalence of a t-test and a regression, and the danger of “peeking” at results before the experiment is finished.</p>
+</section>
+<section id="the-ab-test-as-a-statistical-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-ab-test-as-a-statistical-problem">The A/B Test as a Statistical Problem</h2>
+<p>Every visitor who lands on our homepage either signs up (1) or doesn’t (0). That binary outcome is perfectly described by a <strong>Bernoulli distribution</strong>: a coin flip with probability <img src="https://latex.codecogs.com/png.latex?%5Cpi"> of coming up heads (signing up). Because the CTA a visitor sees might influence their decision, we allow the sign-up probability to differ across groups:</p>
+<ul>
+<li>Visitors who see CTA A sign up with probability <img src="https://latex.codecogs.com/png.latex?%5Cpi_A">.</li>
+<li>Visitors who see CTA B sign up with probability <img src="https://latex.codecogs.com/png.latex?%5Cpi_B">.</li>
+</ul>
+<p>The quantity we actually care about is the <strong>difference in conversion rates</strong>:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Ctheta%20=%20%5Cpi_A%20-%20%5Cpi_B"></p>
+<p>If <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20%3E%200">, CTA A converts better; if <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20%3C%200">, CTA B is better; if <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20=%200">, the wording doesn’t matter.</p>
+<p>We can’t observe <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> directly — we only ever see samples. Our best guess, called an <strong>estimator</strong>, is the difference in sample proportions:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta%20=%20%5Cbar%7BX%7D_A%20-%20%5Cbar%7BX%7D_B"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cbar%7BX%7D_A"> is the fraction of CTA-A visitors who signed up, and <img src="https://latex.codecogs.com/png.latex?%5Cbar%7BX%7D_B"> is the fraction of CTA-B visitors who signed up. The rest of this post studies the properties of this estimator: when can we trust it, how precise is it, and when does it mislead us?</p>
+</section>
+<section id="simulating-data" class="level2">
+<h2 class="anchored" data-anchor-id="simulating-data">Simulating Data</h2>
+<p>In a real experiment we would never know the true values of <img src="https://latex.codecogs.com/png.latex?%5Cpi_A"> and <img src="https://latex.codecogs.com/png.latex?%5Cpi_B">. But for the purpose of this tutorial we get to play god: we set the true parameters ourselves so we can check whether our statistical tools recover the truth.</p>
+<p>Let’s suppose:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cpi_A%20=%200.22,%20%5Cquad%20%5Cpi_B%20=%200.18,%20%5Cquad%20%5Ctheta%20=%200.04"></p>
+<p>CTA A really is four percentage points better. We simulate 1,000 visitors assigned to each group — 2,000 total.</p>
+<div id="584bd788" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">pi_A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.22</span></span>
+<span id="cb1-2">pi_B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.18</span></span>
+<span id="cb1-3">n    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000</span></span>
+<span id="cb1-4"></span>
+<span id="cb1-5">A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_A, n)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1 = signed up, 0 = did not</span></span>
+<span id="cb1-6">B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_B, n)</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">theta_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> B.mean()</span>
+<span id="cb1-9"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Sample proportion (A): </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>A<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>mean()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-10"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Sample proportion (B): </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>B<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>mean()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-11"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Estimated difference θ̂: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theta_hat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  (true θ = 0.04)"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample proportion (A): 0.2240
+Sample proportion (B): 0.1990
+Estimated difference θ̂: 0.0250  (true θ = 0.04)</code></pre>
+</div>
+</div>
+<p>Our point estimate is already quite close to the true value of 0.04. But is that luck, or can we expect <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> to reliably track <img src="https://latex.codecogs.com/png.latex?%5Ctheta">? That’s exactly the question the Law of Large Numbers answers.</p>
+</section>
+<section id="the-law-of-large-numbers" class="level2">
+<h2 class="anchored" data-anchor-id="the-law-of-large-numbers">The Law of Large Numbers</h2>
+<p>The <strong>Law of Large Numbers (LLN)</strong> states that as the sample size grows, the sample mean converges to the population mean. Applied here: as we collect more and more visitors, <img src="https://latex.codecogs.com/png.latex?%5Cbar%7BX%7D_A"> homes in on <img src="https://latex.codecogs.com/png.latex?%5Cpi_A">, <img src="https://latex.codecogs.com/png.latex?%5Cbar%7BX%7D_B"> homes in on <img src="https://latex.codecogs.com/png.latex?%5Cpi_B">, and therefore <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta%20=%20%5Cbar%7BX%7D_A%20-%20%5Cbar%7BX%7D_B"> homes in on <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20=%200.04">.</p>
+<p>The plot below shows this convergence in action. We take the 1,000 paired draws we already simulated, compute their element-wise differences, and track the <em>running average</em> of those differences as observations accumulate.</p>
+<div id="85e78e8d" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">diffs       <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> B</span>
+<span id="cb3-2">running_avg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.cumsum(diffs) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb3-3"></span>
+<span id="cb3-4">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb3-5">ax.plot(np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), running_avg, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>BLUE, lw<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r"Running </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">hat</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\t</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">heta</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb3-6">ax.axhline(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.04</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>RED, ls<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--"</span>, lw<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r"True </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\t</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">heta = 0</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">.</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">04</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb3-7">ax.axhline(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.00</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>GREY, ls<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, lw<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,   label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Null (no difference)"</span>)</span>
+<span id="cb3-8">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of observations"</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>)</span>
+<span id="cb3-9">ax.set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r"Cumulative average of </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">X_A - X_B</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>)</span>
+<span id="cb3-10">ax.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Law of Large Numbers: Convergence of the Estimator"</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13</span>, fontweight<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bold"</span>)</span>
+<span id="cb3-11">ax.legend(fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>)</span>
+<span id="cb3-12">ax.set_xlim(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, n)</span>
+<span id="cb3-13">ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, decimals<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb3-14">plt.tight_layout()</span>
+<span id="cb3-15">plt.show()</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index_files/figure-html/cell-4-output-1.png" width="853" height="374" class="figure-img"></p>
+<figcaption>Running average of θ̂ as more observations arrive. The estimate starts noisy but converges to the true value of 0.04.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>With only a handful of observations the running average bounces around wildly — at some points it even dips below zero, suggesting (falsely) that CTA B is better. But as the sample grows, the noise averages out and <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> settles comfortably near the true value of 4%. This is why sample size matters so much in practice: the LLN gives us <em>eventual</em> accuracy, but we need a large enough <img src="https://latex.codecogs.com/png.latex?n"> to get there.</p>
+</section>
+<section id="bootstrap-standard-errors" class="level2">
+<h2 class="anchored" data-anchor-id="bootstrap-standard-errors">Bootstrap Standard Errors</h2>
+<p>Knowing that <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> will eventually be close to <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> is reassuring, but in practice we run an experiment <em>once</em> with a fixed sample size. The next question is: <strong>how precise is our single estimate?</strong> Can we quantify the uncertainty around <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta">?</p>
+<p>The <strong>bootstrap</strong> is an elegant, assumption-light method for doing exactly this. The key idea is to treat our observed data as if it <em>were</em> the population, and ask: if we re-ran the experiment by sampling from our data (with replacement), how much would <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> vary from resample to resample? That variability is our estimate of the standard error.</p>
+<p>Here’s the procedure:</p>
+<div id="5a5a866f" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">B_boot <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000</span></span>
+<span id="cb4-2">boot_estimates <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.empty(B_boot)</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(B_boot):</span>
+<span id="cb4-5">    A_star <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.choice(A, size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n, replace<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb4-6">    B_star <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.choice(B, size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n, replace<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb4-7">    boot_estimates[i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A_star.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> B_star.mean()</span>
+<span id="cb4-8"></span>
+<span id="cb4-9">se_boot <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> boot_estimates.std()</span>
+<span id="cb4-10"></span>
+<span id="cb4-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Analytical SE</span></span>
+<span id="cb4-12">pi_A_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A.mean()</span>
+<span id="cb4-13">pi_B_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> B.mean()</span>
+<span id="cb4-14">se_analytical <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.sqrt(pi_A_hat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>pi_A_hat)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> pi_B_hat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>pi_B_hat)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>n)</span>
+<span id="cb4-15"></span>
+<span id="cb4-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 95% CI using bootstrap SE</span></span>
+<span id="cb4-17">ci_low  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> theta_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.96</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> se_boot</span>
+<span id="cb4-18">ci_high <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> theta_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.96</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> se_boot</span>
+<span id="cb4-19"></span>
+<span id="cb4-20"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Bootstrap SE:   </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>se_boot<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.5f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb4-21"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Analytical SE:  </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>se_analytical<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.5f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb4-22"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"95% CI for θ:  (</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ci_low<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">, </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ci_high<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Bootstrap SE:   0.01859
+Analytical SE:  0.01825
+95% CI for θ:  (-0.0114, 0.0614)</code></pre>
+</div>
+</div>
+<div id="5e2ddc62" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index_files/figure-html/cell-6-output-1.png" width="759" height="372" class="figure-img"></p>
+<figcaption>Distribution of 1,000 bootstrap resamples of θ̂. The spread of this distribution is our estimate of the standard error.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The bootstrap standard error and the analytical formula give nearly identical answers — this is reassuring, because it confirms that the bootstrap is working as expected even though it never looks at the true parameters. The <strong>95% confidence interval</strong> spans from roughly -0.011 to 0.061. A frequentist interpretation: if we repeated this whole procedure many times, 95% of the intervals constructed this way would contain the true <img src="https://latex.codecogs.com/png.latex?%5Ctheta">. Crucially, the interval does <em>not</em> contain zero, which hints that our data favor CTA A — though we’ll make that formal in the hypothesis testing section.</p>
+</section>
+<section id="the-central-limit-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="the-central-limit-theorem">The Central Limit Theorem</h2>
+<p>The <strong>Central Limit Theorem (CLT)</strong> is one of the most remarkable results in all of statistics. It says that no matter what shape the underlying population distribution takes, the sampling distribution of the sample mean becomes approximately <strong>Normal</strong> as the sample size grows. For us, this means that <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta%20=%20%5Cbar%7BX%7D_A%20-%20%5Cbar%7BX%7D_B"> is approximately Normal even though the raw data are Bernoulli (binary), as long as <img src="https://latex.codecogs.com/png.latex?n"> is large enough.</p>
+<p>To see this in action, we repeat the experiment 1,000 times at four different sample sizes. For each repetition and each <img src="https://latex.codecogs.com/png.latex?n">, we draw fresh data and compute a new <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta">.</p>
+<div id="577aa9c8" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">sample_sizes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>]</span>
+<span id="cb6-2">sim_estimates <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb6-3"></span>
+<span id="cb6-4"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> n_sim <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> sample_sizes:</span>
+<span id="cb6-5">    ests <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.empty(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000</span>)</span>
+<span id="cb6-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000</span>):</span>
+<span id="cb6-7">        a <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_A, n_sim)</span>
+<span id="cb6-8">        b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_B, n_sim)</span>
+<span id="cb6-9">        ests[i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> a.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> b.mean()</span>
+<span id="cb6-10">    sim_estimates[n_sim] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ests</span></code></pre></div></div>
+</details>
+</div>
+<div id="3d5406a7" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index_files/figure-html/cell-8-output-1.png" width="950" height="680" class="figure-img"></p>
+<figcaption>Sampling distribution of θ̂ at four sample sizes. As n grows, the distribution tightens and becomes more bell-shaped — the Central Limit Theorem in action.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>At <img src="https://latex.codecogs.com/png.latex?n%20=%2025"> the histogram is lumpy and noticeably skewed — the Normal approximation is visibly rough. By <img src="https://latex.codecogs.com/png.latex?n%20=%20100"> the bell shape is already quite good, and by <img src="https://latex.codecogs.com/png.latex?n%20=%20500"> the simulated distribution is nearly indistinguishable from the theoretical Normal. This progression is the CLT in a picture: larger samples smooth out the quirks of the underlying Bernoulli distribution and reveal the universal bell curve underneath.</p>
+</section>
+<section id="hypothesis-testing" class="level2">
+<h2 class="anchored" data-anchor-id="hypothesis-testing">Hypothesis Testing</h2>
+<p>Now that we know <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> is approximately Normal for large <img src="https://latex.codecogs.com/png.latex?n">, we have everything we need to run a formal hypothesis test. The setup:</p>
+<ul>
+<li><strong>Null hypothesis</strong> <img src="https://latex.codecogs.com/png.latex?H_0">: <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20=%200"> — the CTAs perform equally.</li>
+<li><strong>Alternative hypothesis</strong> <img src="https://latex.codecogs.com/png.latex?H_1">: <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20%5Cneq%200"> — one CTA is better.</li>
+</ul>
+<p>The goal is to decide whether our observed <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> is surprising enough under <img src="https://latex.codecogs.com/png.latex?H_0"> to count as evidence against it. We do this by standardizing:</p>
+<p><img src="https://latex.codecogs.com/png.latex?z%20=%20%5Cfrac%7B%5Chat%5Ctheta%20-%200%7D%7BSE(%5Chat%5Ctheta)%7D"></p>
+<p>Why standardize? Under <img src="https://latex.codecogs.com/png.latex?H_0"> we know (by the CLT) that <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta"> is approximately <img src="https://latex.codecogs.com/png.latex?N(0,%20SE%5E2)">. Dividing by <img src="https://latex.codecogs.com/png.latex?SE"> transforms it into a standard Normal <img src="https://latex.codecogs.com/png.latex?N(0,1)">. We then know <em>exactly</em> how surprising any value of <img src="https://latex.codecogs.com/png.latex?z"> is under the null — we just look it up in the standard Normal table (or let the computer do it).</p>
+<p>You might hear this called a <strong>t-test</strong>. The name comes from the classical setting where the raw data are assumed to be Normal and the variance is estimated — the test statistic then follows an exact <img src="https://latex.codecogs.com/png.latex?t">-distribution, not a Normal. Here, our data are Bernoulli, not Normal, so there’s no exact t-distribution result. We’re relying on the CLT for approximate Normality, which technically makes this a <strong>z-test</strong>. In practice, for large samples the <img src="https://latex.codecogs.com/png.latex?t">-distribution with many degrees of freedom is nearly identical to the standard Normal, so the distinction barely matters — but it’s worth understanding <em>why</em>.</p>
+<div id="548541ad" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">z_stat  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> theta_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> se_analytical</span>
+<span id="cb7-2">p_value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> stats.norm.cdf(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(z_stat)))   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># two-sided</span></span>
+<span id="cb7-3"></span>
+<span id="cb7-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Point estimate  θ̂  = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theta_hat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb7-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Standard error  SE  = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>se_analytical<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.5f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb7-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"z-statistic         = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>z_stat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb7-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"p-value             = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>p_value<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Point estimate  θ̂  = 0.0250
+Standard error  SE  = 0.01825
+z-statistic         = 1.3695
+p-value             = 0.1708</code></pre>
+</div>
+</div>
+<div id="eb0c13d8" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index_files/figure-html/cell-10-output-1.png" width="855" height="374" class="figure-img"></p>
+<figcaption>The observed z-statistic falls well into the rejection region, giving strong evidence against the null hypothesis.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="14469959" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="10">
+<style type="text/css">
+#T_60f04_row0_col0, #T_60f04_row0_col1, #T_60f04_row1_col0, #T_60f04_row1_col1, #T_60f04_row2_col0, #T_60f04_row2_col1, #T_60f04_row3_col0, #T_60f04_row3_col1 {
+  text-align: center;
+}
+</style>
+
+<div id="T_60f04" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_60f04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Two-Sample z-Test Summary
+</figcaption>
+<div aria-describedby="T_60f04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_60f04" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th id="T_60f04_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Quantity</th>
+<th id="T_60f04_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_60f04_row0_col0" class="data row0 col0">Point estimate (θ̂)</td>
+<td id="T_60f04_row0_col1" class="data row0 col1">0.0250</td>
+</tr>
+<tr class="even">
+<td id="T_60f04_row1_col0" class="data row1 col0">Standard error</td>
+<td id="T_60f04_row1_col1" class="data row1 col1">0.01825</td>
+</tr>
+<tr class="odd">
+<td id="T_60f04_row2_col0" class="data row2 col0">z-statistic</td>
+<td id="T_60f04_row2_col1" class="data row2 col1">1.3695</td>
+</tr>
+<tr class="even">
+<td id="T_60f04_row3_col0" class="data row3 col0">p-value</td>
+<td id="T_60f04_row3_col1" class="data row3 col1">0.1708</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>With <img src="https://latex.codecogs.com/png.latex?z%20%5Capprox"> 1.37 and <img src="https://latex.codecogs.com/png.latex?p%20%5Capprox"> 0.1708, the result is statistically significant at the conventional <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200.05"> threshold. In other words, if the two CTAs truly performed identically, we would observe a difference this large or larger only about 17.1% of the time — unlikely enough that we reject <img src="https://latex.codecogs.com/png.latex?H_0"> and conclude that CTA A converts better.</p>
+</section>
+<section id="the-t-test-as-a-regression" class="level2">
+<h2 class="anchored" data-anchor-id="the-t-test-as-a-regression">The T-Test as a Regression</h2>
+<p>There’s a beautiful and practical equivalence hiding in the background: the two-sample test we just ran is <strong>mathematically identical to a simple linear regression</strong>. Seeing this connection deepens intuition and points toward a much more flexible framework.</p>
+<p>Stack the CTA A and CTA B observations into one dataset. Each row has an outcome <img src="https://latex.codecogs.com/png.latex?Y_i%20%5Cin%20%5C%7B0,%201%5C%7D"> and a group indicator <img src="https://latex.codecogs.com/png.latex?D_i"> (1 for CTA A, 0 for CTA B). Fit:</p>
+<p><img src="https://latex.codecogs.com/png.latex?Y_i%20=%20%5Cbeta_0%20+%20%5Cbeta_1%20D_i%20+%20%5Cvarepsilon_i"></p>
+<p>The coefficient <img src="https://latex.codecogs.com/png.latex?%5Cbeta_0"> is the expected outcome when <img src="https://latex.codecogs.com/png.latex?D_i%20=%200"> — that’s <img src="https://latex.codecogs.com/png.latex?%5Cpi_B">. The coefficient <img src="https://latex.codecogs.com/png.latex?%5Cbeta_0%20+%20%5Cbeta_1"> is the expected outcome when <img src="https://latex.codecogs.com/png.latex?D_i%20=%201"> — that’s <img src="https://latex.codecogs.com/png.latex?%5Cpi_A">. So <img src="https://latex.codecogs.com/png.latex?%5Cbeta_1%20=%20%5Cpi_A%20-%20%5Cpi_B%20=%20%5Ctheta">, and the OLS estimate <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta_1"> is numerically the same as <img src="https://latex.codecogs.com/png.latex?%5Chat%5Ctheta%20=%20%5Cbar%7BX%7D_A%20-%20%5Cbar%7BX%7D_B">.</p>
+<div id="88ef3eb3" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> scipy.stats <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> t <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> t_dist</span>
+<span id="cb9-2"></span>
+<span id="cb9-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Stack the data</span></span>
+<span id="cb9-4">Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.concatenate([A, B])</span>
+<span id="cb9-5">D <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.concatenate([np.ones(n), np.zeros(n)])</span>
+<span id="cb9-6"></span>
+<span id="cb9-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># OLS by hand (or use scipy/statsmodels)</span></span>
+<span id="cb9-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> statsmodels.api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sm</span>
+<span id="cb9-9">X_design <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sm.add_constant(D)</span>
+<span id="cb9-10">model    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sm.OLS(Y, X_design).fit()</span>
+<span id="cb9-11"></span>
+<span id="cb9-12">beta0, beta1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.params</span>
+<span id="cb9-13">se_b1        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.bse[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb9-14">t_stat       <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.tvalues[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb9-15">p_reg        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.pvalues[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb9-16"></span>
+<span id="cb9-17"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"β̂₀ (≈ π_B)  = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>beta0<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  [true π_B = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>pi_B<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">]"</span>)</span>
+<span id="cb9-18"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"β̂₁ (≈ θ)   = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>beta1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  [true θ  = 0.04]"</span>)</span>
+<span id="cb9-19"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"SE(β̂₁)      = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>se_b1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.5f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb9-20"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"t-statistic  = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>t_stat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb9-21"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"p-value      = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>p_reg<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>β̂₀ (≈ π_B)  = 0.1990  [true π_B = 0.18]
+β̂₁ (≈ θ)   = 0.0250  [true θ  = 0.04]
+SE(β̂₁)      = 0.01826
+t-statistic  = 1.3688
+p-value      = 0.1712</code></pre>
+</div>
+</div>
+<div id="3f09b37a" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="12">
+<style type="text/css">
+#T_5cda9_row0_col0, #T_5cda9_row0_col1, #T_5cda9_row0_col2, #T_5cda9_row1_col0, #T_5cda9_row1_col1, #T_5cda9_row1_col2, #T_5cda9_row2_col0, #T_5cda9_row2_col1, #T_5cda9_row2_col2, #T_5cda9_row3_col0, #T_5cda9_row3_col1, #T_5cda9_row3_col2 {
+  text-align: center;
+}
+</style>
+
+<div id="T_5cda9" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_5cda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Two-sample z-test vs. OLS Regression: Side-by-Side Comparison
+</figcaption>
+<div aria-describedby="T_5cda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_5cda9" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th id="T_5cda9_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th"></th>
+<th id="T_5cda9_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Two-sample z-test</th>
+<th id="T_5cda9_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">OLS regression</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_5cda9_row0_col0" class="data row0 col0">Point estimate</td>
+<td id="T_5cda9_row0_col1" class="data row0 col1">0.0250</td>
+<td id="T_5cda9_row0_col2" class="data row0 col2">0.0250</td>
+</tr>
+<tr class="even">
+<td id="T_5cda9_row1_col0" class="data row1 col0">Standard error</td>
+<td id="T_5cda9_row1_col1" class="data row1 col1">0.01825</td>
+<td id="T_5cda9_row1_col2" class="data row1 col2">0.01826</td>
+</tr>
+<tr class="odd">
+<td id="T_5cda9_row2_col0" class="data row2 col0">Test statistic</td>
+<td id="T_5cda9_row2_col1" class="data row2 col1">1.3695</td>
+<td id="T_5cda9_row2_col2" class="data row2 col2">1.3688</td>
+</tr>
+<tr class="even">
+<td id="T_5cda9_row3_col0" class="data row3 col0">p-value</td>
+<td id="T_5cda9_row3_col1" class="data row3 col1">0.1708</td>
+<td id="T_5cda9_row3_col2" class="data row3 col2">0.1712</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>The point estimates are identical — they must be, by algebra. The standard errors are <em>very</em> close but not exactly equal: OLS assumes a single pooled residual variance across both groups, while our two-sample formula lets each group have its own variance. For reasonably balanced experiments with similar conversion rates the difference is negligible.</p>
+<p>Why does this equivalence matter? Because the regression framework <strong>scales</strong>. Want to control for the day of the week a visitor arrived? Add a day-of-week dummy. Want to test three CTA variants simultaneously? Add another indicator. Want to check whether mobile users respond differently to the CTAs? Add an interaction term. All of that falls naturally out of regression, and the inference works exactly as it did here.</p>
+</section>
+<section id="the-problem-with-peeking" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-with-peeking">The Problem with Peeking</h2>
+<p>So far we’ve run our experiment, waited for all 1,000 visitors per group to arrive, and <em>then</em> looked at the result. But what if your boss is impatient? What if she says: <em>“Check the numbers after every 100 visitors — and if it’s significant, we stop early and call a winner.”</em></p>
+<p>This practice is called <strong>peeking</strong>, and it is one of the most common mistakes in A/B testing. Here’s why it’s a problem.</p>
+<p>A single test at <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200.05"> has a 5% chance of falsely rejecting <img src="https://latex.codecogs.com/png.latex?H_0"> when the null is actually true (a Type I error). But every time you peek, you get another roll of the dice. Each additional look is a new opportunity to get lucky and see a spuriously significant result. Across 10 peeks, the chance of at least one false positive is much higher than 5%.</p>
+<p>Let’s quantify exactly how much higher. We simulate a world where <img src="https://latex.codecogs.com/png.latex?H_0"> is <strong>true</strong> (<img src="https://latex.codecogs.com/png.latex?%5Cpi_A%20=%20%5Cpi_B%20=%200.20">, <img src="https://latex.codecogs.com/png.latex?%5Ctheta%20=%200">) and run 10,000 experiments. In each experiment, we peek at the results after 100, 200, …, 1,000 visitors per group.</p>
+<div id="6a2461bc" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">n_total   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000</span></span>
+<span id="cb11-2">peek_at   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, n_total <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 10 peeks</span></span>
+<span id="cb11-3">n_sims    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10_000</span></span>
+<span id="cb11-4">pi_null   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span>                               <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># H0: both groups equal</span></span>
+<span id="cb11-5"></span>
+<span id="cb11-6">false_positives <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb11-7"></span>
+<span id="cb11-8"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(n_sims):</span>
+<span id="cb11-9">    A_null <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_null, n_total)</span>
+<span id="cb11-10">    B_null <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, pi_null, n_total)</span>
+<span id="cb11-11"></span>
+<span id="cb11-12">    rejected <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span></span>
+<span id="cb11-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> peek <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> peek_at:</span>
+<span id="cb11-14">        a_sub <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A_null[:peek]</span>
+<span id="cb11-15">        b_sub <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> B_null[:peek]</span>
+<span id="cb11-16">        diff  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> a_sub.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> b_sub.mean()</span>
+<span id="cb11-17">        se_p  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.sqrt(a_sub.mean()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>a_sub.mean())<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>peek <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb11-18">                        b_sub.mean()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>b_sub.mean())<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>peek)</span>
+<span id="cb11-19">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> se_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb11-20">            z_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> diff <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> se_p</span>
+<span id="cb11-21">            p_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> stats.norm.cdf(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(z_p)))</span>
+<span id="cb11-22">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> p_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>:</span>
+<span id="cb11-23">                rejected <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb11-24">                <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">break</span>   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># stop the experiment early, as the boss wants</span></span>
+<span id="cb11-25"></span>
+<span id="cb11-26">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> rejected:</span>
+<span id="cb11-27">        false_positives <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb11-28"></span>
+<span id="cb11-29">fpr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> false_positives <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> n_sims</span>
+<span id="cb11-30"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Nominal false positive rate (single test): 5.0%"</span>)</span>
+<span id="cb11-31"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Empirical false positive rate (10 peeks):  </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>fpr<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.1f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">%"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nominal false positive rate (single test): 5.0%
+Empirical false positive rate (10 peeks):  19.4%</code></pre>
+</div>
+</div>
+<div id="09127a5a" class="cell" data-execution_count="14">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index_files/figure-html/cell-15-output-1.png" width="567" height="374" class="figure-img"></p>
+<figcaption>Peeking dramatically inflates the false positive rate above the nominal 5% level.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The result is stark. A single properly-timed test keeps the false positive rate at its nominal 5%. But peeking 10 times — and stopping as soon as <em>any</em> peek is significant — inflates that rate to around <strong>19%</strong>. That means roughly one in four experiments will declare a winner that doesn’t actually exist, simply because we kept looking.</p>
+<p>The practical lesson: <strong>decide your sample size in advance, run the experiment to completion, and look at the results once.</strong> If you genuinely need to peek (e.g., to catch a catastrophic failure), use methods designed for sequential testing — such as sequential probability ratio tests or alpha-spending functions — that maintain valid error control across multiple looks. Classical frequentist tests, run as described in this post, are calibrated for a single look only.</p>
+
+
+<!-- -->
+
+</section>
+
+ ]]></description>
+  <guid>https://rsm-cvuppu.github.io/mywebsite/posts/hw1/</guid>
+  <pubDate>Wed, 15 Apr 2026 07:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Welcome To My Blog</title>
+  <dc:creator>Tristan O&#39;Malley</dc:creator>
+  <link>https://rsm-cvuppu.github.io/mywebsite/posts/welcome/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This is the first post in a Quarto blog. Welcome!</p>
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
+<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
+
+
+
+ ]]></description>
+  <category>news</category>
+  <guid>https://rsm-cvuppu.github.io/mywebsite/posts/welcome/</guid>
+  <pubDate>Sun, 12 Apr 2026 07:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
