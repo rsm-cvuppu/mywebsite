@@ -389,10 +389,9 @@ rates at the conventional 5% level. The data therefore support the claim that CT
 better than CTA B.
 
 Just as important, the effect is not only statistically significant but also practically visible.
-A lift of about `{python} theta_hat:.1%` on top of a baseline near `{python} B.mean():.1%` is a
-relative improvement of roughly `{python} relative_lift:.1%`. Whether that is worth implementing
-would depend on traffic, downstream revenue, and how expensive the creative change is — but it is
-large enough to be interesting in a real product setting.
+The estimated improvement is material, and represents a meaningful relative lift over the baseline.
+Whether that is worth implementing would depend on traffic, downstream revenue, and how expensive
+the creative change is — but it is large enough to be interesting in a real product setting.
 
 ## The Same Comparison as a Regression
 
@@ -511,7 +510,7 @@ plt.show()
 
 The key lesson is that a 5% test is calibrated for **one planned analysis**, not for a running
 sequence of opportunistic checks. By the tenth look, the probability of declaring a winner when no
-winner exists has inflated to roughly `{python} final_fpr:.0%`.
+winner exists has inflated to roughly 20% — far above the intended 5% level.
 
 That is why experienced experimenters pre-register a stopping rule, fix a sample size in advance,
 or use methods specifically designed for sequential monitoring. Without those safeguards, the false
