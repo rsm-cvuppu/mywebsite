@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-3857c22e486953263cef44b5ce82424e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-54816a8c4515a26badb8ba45cd03519b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-e83354bc9f0756c89ed52210fda71a3d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -1103,7 +1103,7 @@ Empirical false positive rate (10 peeks):  19.4%</code></pre>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Does Word Choice Matter? Running an A/B Test on a Newsletter Sign-Up"</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Simulating Key Ideas from Classical Frequentist Statistics"</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Hari Chandana Vuppu</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 04/15/2026</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 2026-04-15</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
@@ -1114,527 +1114,524 @@ Empirical false positive rate (10 peeks):  19.4%</code></pre>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">    fig-width: 9</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">    fig-height: 5</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> mticker</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Colour palette used throughout</span></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>BLUE   <span class="op">=</span> <span class="st">"#4C72B0"</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>ORANGE <span class="op">=</span> <span class="st">"#DD8452"</span></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>GREY   <span class="op">=</span> <span class="st">"#8C8C8C"</span></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>GREEN  <span class="op">=</span> <span class="st">"#55A868"</span></span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>RED    <span class="op">=</span> <span class="st">"#C44E52"</span></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>Imagine you run a small online publication and your homepage features a newsletter sign-up</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>box. The box works, but you have a nagging feeling that the wording of the prompt —</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>the "call to action" (CTA) — might matter more than you think. So you draft two versions:</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CTA A:** *"Sign up for our newsletter here!"*</span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CTA B:** *"Stay in the loop — join our newsletter today!"*</span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>Both say roughly the same thing, but do they convert visitors at the same rate? Intuition alone</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>can't answer that. Luckily, we can run an **A/B test**.</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">    df-print: default</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: false</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> mticker</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> HTML, display</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>BLUE   <span class="op">=</span> <span class="st">"#4C72B0"</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>ORANGE <span class="op">=</span> <span class="st">"#DD8452"</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>GREY   <span class="op">=</span> <span class="st">"#8C8C8C"</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>GREEN  <span class="op">=</span> <span class="st">"#55A868"</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>RED    <span class="op">=</span> <span class="st">"#C44E52"</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.top"</span>: <span class="va">False</span>,</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.right"</span>: <span class="va">False</span>,</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.titleweight"</span>: <span class="st">"bold"</span>,</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.grid"</span>: <span class="va">True</span>,</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grid.alpha"</span>: <span class="fl">0.20</span>,</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"font.size"</span>: <span class="dv">11</span>,</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>An A/B test is one of the simplest and most powerful tools in a data scientist's toolkit. You</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>randomly assign each visitor to see one of the two CTAs — half see A, half see B — then</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>track who actually signs up. Because the assignment is random, any difference in sign-up</span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>rates between the two groups can be attributed to the wording itself rather than to some</span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>confounding factor (time of day, referral source, etc.).</span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>In this post we won't just *run* the test — we'll use simulation to illuminate the</span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>statistical machinery underneath it: the Law of Large Numbers, the Bootstrap, the Central</span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>Limit Theorem, hypothesis testing, the equivalence of a t-test and a regression, and</span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>the danger of "peeking" at results before the experiment is finished.</span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## The A/B Test as a Statistical Problem</span></span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>Every visitor who lands on our homepage either signs up (1) or doesn't (0). That binary</span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>outcome is perfectly described by a **Bernoulli distribution**: a coin flip with probability</span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>$\pi$ of coming up heads (signing up). Because the CTA a visitor sees might influence their</span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>decision, we allow the sign-up probability to differ across groups:</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> percent_formatter(decimals<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mticker.PercentFormatter(xmax<span class="op">=</span><span class="dv">1</span>, decimals<span class="op">=</span>decimals)</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> display_table(df, caption, fmt<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>    styler <span class="op">=</span> df.style.hide(axis<span class="op">=</span><span class="st">"index"</span>)</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fmt <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>        styler <span class="op">=</span> styler.<span class="bu">format</span>(fmt)</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>    styler <span class="op">=</span> styler.set_caption(caption).set_table_styles([</span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"selector"</span>: <span class="st">"caption"</span>, <span class="st">"props"</span>: [(<span class="st">"caption-side"</span>, <span class="st">"top"</span>), (<span class="st">"font-size"</span>, <span class="st">"1.05em"</span>), (<span class="st">"font-weight"</span>, <span class="st">"bold"</span>)]},</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"selector"</span>: <span class="st">"th"</span>, <span class="st">"props"</span>: [(<span class="st">"text-align"</span>, <span class="st">"center"</span>), (<span class="st">"background-color"</span>, <span class="st">"#f3f4f6"</span>)]},</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"selector"</span>: <span class="st">"td"</span>, <span class="st">"props"</span>: [(<span class="st">"text-align"</span>, <span class="st">"center"</span>)]},</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>    display(HTML(styler.to_html()))</span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
 <span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Visitors who see CTA A sign up with probability $\pi_A$.</span>
-<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Visitors who see CTA B sign up with probability $\pi_B$.</span>
-<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>The quantity we actually care about is the **difference in conversion rates**:</span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>$$\theta = \pi_A - \pi_B$$</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>Suppose you run a small online publication and the homepage includes a newsletter sign-up box.</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a>The box works, but not brilliantly, and you suspect the wording of the prompt might be part of</span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>why. You draft two versions:</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CTA A:** *"Sign up for our newsletter here!"*</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CTA B:** *"Stay in the loop — join our newsletter today!"*</span>
 <span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>If $\theta &gt; 0$, CTA A converts better; if $\theta &lt; 0$, CTA B is better; if $\theta = 0$,</span>
-<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>the wording doesn't matter.</span>
-<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>We can't observe $\theta$ directly — we only ever see samples. Our best guess, called an</span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>**estimator**, is the difference in sample proportions:</span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>$$\hat\theta = \bar{X}_A - \bar{X}_B$$</span>
-<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>where $\bar{X}_A$ is the fraction of CTA-A visitors who signed up, and $\bar{X}_B$ is the</span>
-<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>fraction of CTA-B visitors who signed up. The rest of this post studies the properties of</span>
-<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>this estimator: when can we trust it, how precise is it, and when does it mislead us?</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>They are similar messages, but not identical. One is direct and plain; the other sounds more</span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>conversational and urgency-driven. The business question is simple: **does this wording change</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>behavior enough to matter?**</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>That is exactly what an **A/B test** is for. We randomly assign visitors so that one group sees</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>CTA A and another sees CTA B, then compare the fraction of visitors who sign up. Randomization is</span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>what makes the comparison credible: in expectation, the two groups are alike except for the CTA</span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>shown to them.</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>This post uses one stylized A/B test to illustrate several core ideas from classical frequentist</span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>statistics:</span>
 <span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulating Data</span></span>
-<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>In a real experiment we would never know the true values of $\pi_A$ and $\pi_B$. But</span>
-<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>for the purpose of this tutorial we get to play god: we set the true parameters ourselves</span>
-<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>so we can check whether our statistical tools recover the truth.</span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the **Law of Large Numbers**,</span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the **bootstrap**,</span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the **Central Limit Theorem**,</span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**hypothesis testing**,</span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the connection between a two-group comparison and **regression**, and</span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the danger of **peeking** before an experiment is complete.</span>
 <span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a>Let's suppose:</span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a>The goal is not only to get an answer, but to understand *why* the answer is trustworthy.</span>
 <span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a>$$\pi_A = 0.22, \quad \pi_B = 0.18, \quad \theta = 0.04$$</span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## The A/B Test as a Statistical Problem</span></span>
 <span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a>CTA A really is four percentage points better. We simulate 1,000 visitors assigned to each</span>
-<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a>group — 2,000 total.</span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a>For each visitor, the outcome is binary: they either subscribe (<span class="in">`1`</span>) or they do not (<span class="in">`0`</span>). That</span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a>makes the outcome naturally **Bernoulli**. Let</span>
 <span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a>pi_A <span class="op">=</span> <span class="fl">0.22</span></span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>pi_B <span class="op">=</span> <span class="fl">0.18</span></span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>n    <span class="op">=</span> <span class="dv">1_000</span></span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_A, n)   <span class="co"># 1 = signed up, 0 = did not</span></span>
-<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_B, n)</span>
-<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="op">=</span> A.mean() <span class="op">-</span> B.mean()</span>
-<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sample proportion (A): </span><span class="sc">{</span>A<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sample proportion (B): </span><span class="sc">{</span>B<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated difference θ̂: </span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">  (true θ = 0.04)"</span>)</span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a>Our point estimate is already quite close to the true value of 0.04. But is that luck, or</span>
-<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a>can we expect $\hat\theta$ to reliably track $\theta$? That's exactly the question the</span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>Law of Large Numbers answers.</span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\pi_A$ = probability of signing up after seeing CTA A,</span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\pi_B$ = probability of signing up after seeing CTA B.</span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a>The estimand we care about is the difference in conversion rates,</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>\theta = \pi_A - \pi_B.</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>If $\theta &gt; 0$, CTA A converts better. If $\theta &lt; 0$, CTA B converts better. If $\theta = 0$,</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a>then word choice did not change the sign-up rate in any meaningful way.</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>In practice, we never observe $\pi_A$ or $\pi_B$ directly. We observe samples, and from those</span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a>samples we construct an estimator,</span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a>\hat\theta = \bar X_A - \bar X_B,</span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>where $\bar X_A$ and $\bar X_B$ are the sample conversion rates in the two groups.</span>
 <span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Law of Large Numbers</span></span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a>This is a tiny formula with a lot packed into it. The rest of the post is really about three</span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a>questions:</span>
 <span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>The **Law of Large Numbers (LLN)** states that as the sample size grows, the sample mean</span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>converges to the population mean. Applied here: as we collect more and more visitors,</span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>$\bar{X}_A$ homes in on $\pi_A$, $\bar{X}_B$ homes in on $\pi_B$, and therefore</span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>$\hat\theta = \bar{X}_A - \bar{X}_B$ homes in on $\theta = 0.04$.</span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>The plot below shows this convergence in action. We take the 1,000 paired draws we</span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>already simulated, compute their element-wise differences, and track the *running average*</span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>of those differences as observations accumulate.</span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Does $\hat\theta$ get closer to $\theta$ as the sample grows?</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>How much uncertainty should we attach to a particular estimate?</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>When is a measured difference large enough to count as evidence rather than noise?</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulating a Concrete Experiment</span></span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>In a real experiment we would not know the true probabilities. For teaching purposes, though, it is</span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>useful to set them ourselves so we can see whether the statistical machinery recovers the truth.</span>
 <span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Running average of θ̂ as more observations arrive. The estimate starts noisy but converges to the true value of 0.04."</span></span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a>Throughout the post, suppose the data-generating process is</span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a>\pi_A = 0.22, \qquad \pi_B = 0.18, \qquad \theta = 0.04.</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a>diffs       <span class="op">=</span> A <span class="op">-</span> B</span>
-<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a>running_avg <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a>So CTA A truly outperforms CTA B by **4 percentage points**. We simulate 1,000 visitors per group.</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a>That gives us a realistic-sized online experiment without making the code cumbersome.</span>
 <span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a>ax.plot(np.arange(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>), running_avg, color<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"Running </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="fl">0.04</span>, color<span class="op">=</span>RED, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"True </span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta = 0</span><span class="dv">.</span><span class="vs">04</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="fl">0.00</span>, color<span class="op">=</span>GREY, ls<span class="op">=</span><span class="st">":"</span>, lw<span class="op">=</span><span class="dv">1</span>,   label<span class="op">=</span><span class="st">"Null (no difference)"</span>)</span>
-<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Number of observations"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r"Cumulative average of </span><span class="dv">$</span><span class="vs">X_A - X_B</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Law of Large Numbers: Convergence of the Estimator"</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">1</span>, n)</span>
-<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax<span class="op">=</span><span class="dv">1</span>, decimals<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>pi_A <span class="op">=</span> <span class="fl">0.22</span></span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>pi_B <span class="op">=</span> <span class="fl">0.18</span></span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="op">=</span> <span class="dv">1_000</span></span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_A, n_per_group)</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_B, n_per_group)</span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="op">=</span> A.mean() <span class="op">-</span> B.mean()</span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>relative_lift <span class="op">=</span> theta_hat <span class="op">/</span> B.mean()</span>
 <span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>With only a handful of observations the running average bounces around wildly — at some</span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a>points it even dips below zero, suggesting (falsely) that CTA B is better. But as the</span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>sample grows, the noise averages out and $\hat\theta$ settles comfortably near the true</span>
-<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>value of 4%. This is why sample size matters so much in practice: the LLN gives us</span>
-<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>*eventual* accuracy, but we need a large enough $n$ to get there.</span>
-<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>summary_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Group"</span>: [<span class="st">"CTA A"</span>, <span class="st">"CTA B"</span>],</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Visitors"</span>: [n_per_group, n_per_group],</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sign-ups"</span>: [A.<span class="bu">sum</span>(), B.<span class="bu">sum</span>()],</span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Conversion rate"</span>: [A.mean(), B.mean()],</span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bootstrap Standard Errors</span></span>
-<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>Knowing that $\hat\theta$ will eventually be close to $\theta$ is reassuring, but in</span>
-<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>practice we run an experiment *once* with a fixed sample size. The next question is: **how</span>
-<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a>precise is our single estimate?** Can we quantify the uncertainty around $\hat\theta$?</span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>display_table(</span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a>    summary_df,</span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Observed outcomes in the simulated A/B test"</span>,</span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>    fmt<span class="op">=</span>{<span class="st">"Visitors"</span>: <span class="st">"</span><span class="sc">{:,}</span><span class="st">"</span>, <span class="st">"Sign-ups"</span>: <span class="st">"</span><span class="sc">{:,}</span><span class="st">"</span>, <span class="st">"Conversion rate"</span>: <span class="st">"</span><span class="sc">{:.1%}</span><span class="st">"</span>},</span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>The **bootstrap** is an elegant, assumption-light method for doing exactly this. The key</span>
-<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a>idea is to treat our observed data as if it *were* the population, and ask: if we re-ran</span>
-<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a>the experiment by sampling from our data (with replacement), how much would $\hat\theta$</span>
-<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>vary from resample to resample? That variability is our estimate of the standard error.</span>
-<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>Here's the procedure:</span>
-<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a>B_boot <span class="op">=</span> <span class="dv">1_000</span></span>
-<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>boot_estimates <span class="op">=</span> np.empty(B_boot)</span>
-<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(B_boot):</span>
-<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>    A_star <span class="op">=</span> rng.choice(A, size<span class="op">=</span>n, replace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>    B_star <span class="op">=</span> rng.choice(B, size<span class="op">=</span>n, replace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a>    boot_estimates[i] <span class="op">=</span> A_star.mean() <span class="op">-</span> B_star.mean()</span>
-<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a>se_boot <span class="op">=</span> boot_estimates.std()</span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Analytical SE</span></span>
-<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>pi_A_hat <span class="op">=</span> A.mean()</span>
-<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a>pi_B_hat <span class="op">=</span> B.mean()</span>
-<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a>se_analytical <span class="op">=</span> np.sqrt(pi_A_hat<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>pi_A_hat)<span class="op">/</span>n <span class="op">+</span> pi_B_hat<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>pi_B_hat)<span class="op">/</span>n)</span>
-<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% CI using bootstrap SE</span></span>
-<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a>ci_low  <span class="op">=</span> theta_hat <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> se_boot</span>
-<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a>ci_high <span class="op">=</span> theta_hat <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> se_boot</span>
-<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bootstrap SE:   </span><span class="sc">{</span>se_boot<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Analytical SE:  </span><span class="sc">{</span>se_analytical<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"95% CI for θ:  (</span><span class="sc">{</span>ci_low<span class="sc">:.4f}</span><span class="ss">, </span><span class="sc">{</span>ci_high<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of 1,000 bootstrap resamples of θ̂. The spread of this distribution is our estimate of the standard error."</span></span>
-<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
-<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>ax.hist(boot_estimates, bins<span class="op">=</span><span class="dv">40</span>, color<span class="op">=</span>BLUE, alpha<span class="op">=</span><span class="fl">0.75</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
-<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>ax.axvline(theta_hat,  color<span class="op">=</span>RED,    ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="dv">2</span>,   label<span class="op">=</span><span class="vs">r"Observed </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a>ax.axvline(ci_low,     color<span class="op">=</span>ORANGE, ls<span class="op">=</span><span class="st">":"</span>,  lw<span class="op">=</span><span class="fl">1.8</span>, label<span class="op">=</span><span class="st">"95% CI bounds"</span>)</span>
-<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a>ax.axvline(ci_high,    color<span class="op">=</span>ORANGE, ls<span class="op">=</span><span class="st">":"</span>,  lw<span class="op">=</span><span class="fl">1.8</span>)</span>
-<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="fl">0.04</span>,       color<span class="op">=</span>GREEN,  ls<span class="op">=</span><span class="st">"-"</span>,  lw<span class="op">=</span><span class="fl">1.8</span>, label<span class="op">=</span><span class="vs">r"True </span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta = 0</span><span class="dv">.</span><span class="vs">04</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r"Bootstrapped </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">^</span><span class="op">*</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Count"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Bootstrap Distribution of the Estimator"</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(mticker.PercentFormatter(xmax<span class="op">=</span><span class="dv">1</span>, decimals<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated difference in conversion rates: </span><span class="sc">{</span>theta_hat<span class="sc">:.2%}</span><span class="ss">"</span>)</span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Relative lift of CTA A over CTA B:       </span><span class="sc">{</span>relative_lift<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a>Even before formal inference, the basic story is visible: CTA A converts better in this simulated</span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>sample. But one sample alone cannot tell us whether the estimate is stable or whether we were just</span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a>lucky. That is where the Law of Large Numbers enters.</span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Law of Large Numbers</span></span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a>The **Law of Large Numbers (LLN)** says that sample averages converge to their population averages</span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a>as the sample size grows. In this setting, it implies that the sample conversion rates</span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>$\bar X_A$ and $\bar X_B$ should settle down near $\pi_A$ and $\pi_B$, so their difference</span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a>$\hat\theta$ should settle near the true effect $\theta = 0.04$.</span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>A clean way to visualize that idea is to track the running difference in conversion rates as more</span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>visitors arrive.</span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>running_A <span class="op">=</span> np.cumsum(A) <span class="op">/</span> np.arange(<span class="dv">1</span>, n_per_group <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a>running_B <span class="op">=</span> np.cumsum(B) <span class="op">/</span> np.arange(<span class="dv">1</span>, n_per_group <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a>running_theta <span class="op">=</span> running_A <span class="op">-</span> running_B</span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Running estimate of the treatment effect. Early results are volatile, but the estimate stabilizes as more visitors are observed."</span></span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">4.5</span>))</span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>ax.plot(np.arange(<span class="dv">1</span>, n_per_group <span class="op">+</span> <span class="dv">1</span>), running_theta, color<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"Running </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>ax.axhline(pi_A <span class="op">-</span> pi_B, color<span class="op">=</span>RED, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"True </span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta = 4</span><span class="ch">\%</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span>GREY, ls<span class="op">=</span><span class="st">":"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">"No effect"</span>)</span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">1</span>, n_per_group)</span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Visitors observed per group"</span>)</span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Difference in conversion rates"</span>)</span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_major_formatter(percent_formatter(<span class="dv">0</span>))</span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Law of Large Numbers in an A/B Test"</span>)</span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>This figure captures an important practical truth about experimentation: **small samples are noisy**.</span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>Early in the test, the running estimate jumps around enough that a manager checking too soon could</span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>convince themselves that either CTA is winning. Once the sample gets larger, those swings dampen and</span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>the estimate becomes much more stable.</span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>The LLN does not promise that every intermediate estimate is good. It promises that, with enough</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>observations, the estimator becomes reliable.</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bootstrap Standard Errors</span></span>
 <span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>The bootstrap standard error and the analytical formula give nearly identical answers —</span>
-<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>this is reassuring, because it confirms that the bootstrap is working as expected even</span>
-<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>though it never looks at the true parameters. The **95% confidence interval** spans from</span>
-<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a>roughly <span class="in">`{python} f"{ci_low:.3f}"`</span> to <span class="in">`{python} f"{ci_high:.3f}"`</span>. A frequentist</span>
-<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a>interpretation: if we repeated this whole procedure many times, 95% of the intervals</span>
-<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a>constructed this way would contain the true $\theta$. Crucially, the interval does *not*</span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a>contain zero, which hints that our data favor CTA A — though we'll make that formal in the</span>
-<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a>hypothesis testing section.</span>
-<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Central Limit Theorem</span></span>
-<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>The **Central Limit Theorem (CLT)** is one of the most remarkable results in all of</span>
-<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>statistics. It says that no matter what shape the underlying population distribution takes,</span>
-<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a>the sampling distribution of the sample mean becomes approximately **Normal** as the</span>
-<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a>sample size grows. For us, this means that $\hat\theta = \bar{X}_A - \bar{X}_B$ is</span>
-<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a>approximately Normal even though the raw data are Bernoulli (binary), as long as $n$ is</span>
-<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a>large enough.</span>
-<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>To see this in action, we repeat the experiment 1,000 times at four different sample sizes.</span>
-<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>For each repetition and each $n$, we draw fresh data and compute a new $\hat\theta$.</span>
-<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
-<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a>sim_estimates <span class="op">=</span> {}</span>
-<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n_sim <span class="kw">in</span> sample_sizes:</span>
-<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>    ests <span class="op">=</span> np.empty(<span class="dv">1_000</span>)</span>
-<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1_000</span>):</span>
-<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_A, n_sim)</span>
-<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_B, n_sim)</span>
-<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>        ests[i] <span class="op">=</span> a.mean() <span class="op">-</span> b.mean()</span>
-<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a>    sim_estimates[n_sim] <span class="op">=</span> ests</span>
-<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Sampling distribution of θ̂ at four sample sizes. As n grows, the distribution tightens and becomes more bell-shaped — the Central Limit Theorem in action."</span></span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>Stability in the long run is reassuring, but practitioners usually care about a fixed, completed</span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>experiment. We therefore need a way to answer a more immediate question: **how uncertain is this</span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>particular estimate?**</span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a>One flexible answer is the **bootstrap**. We repeatedly resample from the observed data *with</span>
+<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a>replacement*, recompute the estimate each time, and use the resulting distribution to approximate</span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a>how much $\hat\theta$ would vary across repeated samples.</span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>n_boot <span class="op">=</span> <span class="dv">2_000</span></span>
+<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>boot_estimates <span class="op">=</span> np.empty(n_boot)</span>
+<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_boot):</span>
+<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a>    A_star <span class="op">=</span> rng.choice(A, size<span class="op">=</span>n_per_group, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a>    B_star <span class="op">=</span> rng.choice(B, size<span class="op">=</span>n_per_group, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a>    boot_estimates[i] <span class="op">=</span> A_star.mean() <span class="op">-</span> B_star.mean()</span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>se_boot <span class="op">=</span> boot_estimates.std(ddof<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a>se_analytic <span class="op">=</span> np.sqrt(A.mean() <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> A.mean()) <span class="op">/</span> n_per_group <span class="op">+</span> B.mean() <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> B.mean()) <span class="op">/</span> n_per_group)</span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>ci_normal <span class="op">=</span> np.array([theta_hat <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> se_boot, theta_hat <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> se_boot])</span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>ci_percentile <span class="op">=</span> np.quantile(boot_estimates, [<span class="fl">0.025</span>, <span class="fl">0.975</span>])</span>
+<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a>ci_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Method"</span>: [<span class="st">"Bootstrap SE"</span>, <span class="st">"Analytical SE"</span>, <span class="st">"95% CI (normal bootstrap)"</span>, <span class="st">"95% CI (percentile bootstrap)"</span>],</span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Result"</span>: [</span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>se_boot<span class="sc">:.4f}</span><span class="ss">"</span>,</span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>se_analytic<span class="sc">:.4f}</span><span class="ss">"</span>,</span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"(</span><span class="sc">{</span>ci_normal[<span class="dv">0</span>]<span class="sc">:.2%}</span><span class="ss">, </span><span class="sc">{</span>ci_normal[<span class="dv">1</span>]<span class="sc">:.2%}</span><span class="ss">)"</span>,</span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"(</span><span class="sc">{</span>ci_percentile[<span class="dv">0</span>]<span class="sc">:.2%}</span><span class="ss">, </span><span class="sc">{</span>ci_percentile[<span class="dv">1</span>]<span class="sc">:.2%}</span><span class="ss">)"</span>,</span>
+<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a>display_table(ci_df, <span class="st">"Uncertainty estimates for the treatment effect"</span>)</span>
+<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Bootstrap distribution of the estimated treatment effect. The spread of the histogram reflects the estimator's sampling uncertainty."</span></span>
 <span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">7</span>), sharey<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()</span>
-<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>x_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">0.25</span>, <span class="fl">0.30</span>, <span class="dv">300</span>)</span>
-<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, n_sim <span class="kw">in</span> <span class="bu">zip</span>(axes, sample_sizes):</span>
-<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a>    ests <span class="op">=</span> sim_estimates[n_sim]</span>
-<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>    se_n <span class="op">=</span> np.sqrt(pi_A<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>pi_A)<span class="op">/</span>n_sim <span class="op">+</span> pi_B<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>pi_B)<span class="op">/</span>n_sim)</span>
-<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>    ax.hist(ests, bins<span class="op">=</span><span class="dv">40</span>, density<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span>BLUE, alpha<span class="op">=</span><span class="fl">0.65</span>,</span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>            edgecolor<span class="op">=</span><span class="st">"white"</span>, label<span class="op">=</span><span class="st">"Simulated"</span>)</span>
-<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Overlay the theoretical Normal</span></span>
-<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>    ax.plot(x_range,</span>
-<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a>            stats.norm.pdf(x_range, loc<span class="op">=</span><span class="fl">0.04</span>, scale<span class="op">=</span>se_n),</span>
-<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span>RED, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"Normal approx."</span>)</span>
-<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>    ax.axvline(<span class="fl">0.04</span>, color<span class="op">=</span>GREEN, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"True </span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"n = </span><span class="sc">{</span>n_sim<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Density"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>    ax.xaxis.set_major_formatter(mticker.PercentFormatter(xmax<span class="op">=</span><span class="dv">1</span>, decimals<span class="op">=</span><span class="dv">0</span>))</span>
-<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n_sim <span class="op">==</span> sample_sizes[<span class="dv">0</span>]:</span>
-<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>        ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
-<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Central Limit Theorem: Sampling Distribution of θ̂"</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, y<span class="op">=</span><span class="fl">1.01</span>)</span>
-<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>At $n = 25$ the histogram is lumpy and noticeably skewed — the Normal approximation is</span>
-<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>visibly rough. By $n = 100$ the bell shape is already quite good, and by $n = 500$ the</span>
-<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a>simulated distribution is nearly indistinguishable from the theoretical Normal. This</span>
-<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>progression is the CLT in a picture: larger samples smooth out the quirks of the underlying</span>
-<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a>Bernoulli distribution and reveal the universal bell curve underneath.</span>
-<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hypothesis Testing</span></span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>ax.hist(boot_estimates, bins<span class="op">=</span><span class="dv">40</span>, color<span class="op">=</span>BLUE, alpha<span class="op">=</span><span class="fl">0.80</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>ax.axvline(theta_hat, color<span class="op">=</span>RED, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"Observed </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>ax.axvline(ci_percentile[<span class="dv">0</span>], color<span class="op">=</span>ORANGE, ls<span class="op">=</span><span class="st">":"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"95% percentile CI"</span>)</span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>ax.axvline(ci_percentile[<span class="dv">1</span>], color<span class="op">=</span>ORANGE, ls<span class="op">=</span><span class="st">":"</span>, lw<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a>ax.axvline(pi_A <span class="op">-</span> pi_B, color<span class="op">=</span>GREEN, ls<span class="op">=</span><span class="st">"-"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"True </span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r"Bootstrapped </span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">^</span><span class="op">*</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Count"</span>)</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(percent_formatter(<span class="dv">0</span>))</span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Bootstrap Distribution of the Estimated Effect"</span>)</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>The bootstrap and analytical standard errors are very close, which is what we would hope to see.</span>
+<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>That agreement gives us confidence that our estimated uncertainty is not an artifact of one method.</span>
+<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>The confidence interval also stays away from zero, which already hints that the effect is not just</span>
+<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>sampling noise.</span>
+<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Central Limit Theorem</span></span>
+<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>The **Central Limit Theorem (CLT)** explains why Normal-based inference is so useful in A/B tests.</span>
+<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>Even though each individual outcome is Bernoulli, the sampling distribution of the estimator</span>
+<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>$\hat\theta = \bar X_A - \bar X_B$ becomes approximately Normal when the sample size is large.</span>
+<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a>To make that visible, we repeatedly simulate fresh experiments at several sample sizes and examine</span>
+<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a>the resulting distribution of $\hat\theta$.</span>
+<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
+<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a>n_reps <span class="op">=</span> <span class="dv">1_500</span></span>
+<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a>sim_estimates <span class="op">=</span> {}</span>
 <span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>Now that we know $\hat\theta$ is approximately Normal for large $n$, we have everything we</span>
-<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a>need to run a formal hypothesis test. The setup:</span>
-<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Null hypothesis** $H_0$: $\theta = 0$ — the CTAs perform equally.</span>
-<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Alternative hypothesis** $H_1$: $\theta \neq 0$ — one CTA is better.</span>
+<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n_sim <span class="kw">in</span> sample_sizes:</span>
+<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a>    a_draws <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_A, size<span class="op">=</span>(n_reps, n_sim))</span>
+<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a>    b_draws <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_B, size<span class="op">=</span>(n_reps, n_sim))</span>
+<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a>    sim_estimates[n_sim] <span class="op">=</span> a_draws.mean(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">-</span> b_draws.mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-316"><a href="#cb13-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-317"><a href="#cb13-317" aria-hidden="true" tabindex="-1"></a>The goal is to decide whether our observed $\hat\theta$ is surprising enough under $H_0$</span>
-<span id="cb13-318"><a href="#cb13-318" aria-hidden="true" tabindex="-1"></a>to count as evidence against it. We do this by standardizing:</span>
-<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a>$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$</span>
+<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Sampling distributions of the estimated effect at four sample sizes. As the sample grows, the distribution becomes tighter and more bell-shaped."</span></span>
 <span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a>Why standardize? Under $H_0$ we know (by the CLT) that $\hat\theta$ is approximately</span>
-<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a>$N(0, SE^2)$. Dividing by $SE$ transforms it into a standard Normal $N(0,1)$. We then</span>
-<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>know *exactly* how surprising any value of $z$ is under the null — we just look it up in</span>
-<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a>the standard Normal table (or let the computer do it).</span>
-<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>You might hear this called a **t-test**. The name comes from the classical setting where</span>
-<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>the raw data are assumed to be Normal and the variance is estimated — the test statistic</span>
-<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a>then follows an exact $t$-distribution, not a Normal. Here, our data are Bernoulli, not</span>
-<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a>Normal, so there's no exact t-distribution result. We're relying on the CLT for approximate</span>
-<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>Normality, which technically makes this a **z-test**. In practice, for large samples the</span>
-<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>$t$-distribution with many degrees of freedom is nearly identical to the standard Normal,</span>
-<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>so the distinction barely matters — but it's worth understanding *why*.</span>
-<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>z_stat  <span class="op">=</span> theta_hat <span class="op">/</span> se_analytical</span>
-<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))   <span class="co"># two-sided</span></span>
-<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Point estimate  θ̂  = </span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard error  SE  = </span><span class="sc">{</span>se_analytical<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"z-statistic         = </span><span class="sc">{</span>z_stat<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p-value             = </span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The observed z-statistic falls well into the rejection region, giving strong evidence against the null hypothesis."</span></span>
+<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">7</span>))</span>
+<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()</span>
+<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>x_grid <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">0.25</span>, <span class="fl">0.30</span>, <span class="dv">300</span>)</span>
+<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, n_sim <span class="kw">in</span> <span class="bu">zip</span>(axes, sample_sizes):</span>
+<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>    ests <span class="op">=</span> sim_estimates[n_sim]</span>
+<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>    se_n <span class="op">=</span> np.sqrt(pi_A <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> pi_A) <span class="op">/</span> n_sim <span class="op">+</span> pi_B <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> pi_B) <span class="op">/</span> n_sim)</span>
+<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a>    ax.hist(ests, bins<span class="op">=</span><span class="dv">35</span>, density<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span>BLUE, alpha<span class="op">=</span><span class="fl">0.70</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
+<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>    ax.plot(x_grid, stats.norm.pdf(x_grid, loc<span class="op">=</span>pi_A <span class="op">-</span> pi_B, scale<span class="op">=</span>se_n), color<span class="op">=</span>RED, lw<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>    ax.axvline(pi_A <span class="op">-</span> pi_B, color<span class="op">=</span>GREEN, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.8</span>)</span>
+<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"n = </span><span class="sc">{</span>n_sim<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">\t</span><span class="vs">heta</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Density"</span>)</span>
+<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>    ax.xaxis.set_major_formatter(percent_formatter(<span class="dv">0</span>))</span>
+<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Central Limit Theorem: The Sampling Distribution Approaches Normality"</span>, y<span class="op">=</span><span class="fl">1.02</span>)</span>
+<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>At $n=25$, the distribution is still rough and somewhat asymmetric. By $n=100$, the Normal</span>
+<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>approximation is already much better, and by $n=500$ it is hard to distinguish the simulated</span>
+<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>histogram from the theoretical bell curve. That is the CLT doing exactly what textbooks promise.</span>
+<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a>This is why a Bernoulli outcome does not stop us from using familiar large-sample inference tools.</span>
+<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>The raw data are not Normal. The **estimator** becomes approximately Normal.</span>
+<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hypothesis Testing</span></span>
+<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a>With a large-sample Normal approximation in hand, we can run a formal hypothesis test.</span>
 <span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">500</span>)</span>
-<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
-<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a>ax.plot(x, stats.norm.pdf(x), color<span class="op">=</span>GREY, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">N</span><span class="kw">(</span><span class="vs">0,1</span><span class="kw">)</span><span class="dv">$</span><span class="vs"> under </span><span class="dv">$</span><span class="vs">H_0</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a>crit <span class="op">=</span> <span class="fl">1.96</span></span>
-<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a><span class="co"># Shade rejection regions</span></span>
-<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>x_left  <span class="op">=</span> x[x <span class="op">&lt;=</span> <span class="op">-</span>crit]</span>
-<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>x_right <span class="op">=</span> x[x <span class="op">&gt;=</span> crit]</span>
-<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a>ax.fill_between(x_left,  stats.norm.pdf(x_left),  alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span>RED,  label<span class="op">=</span><span class="st">"Rejection region (α=0.05)"</span>)</span>
-<span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a>ax.fill_between(x_right, stats.norm.pdf(x_right), alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span>RED)</span>
-<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a>ax.axvline( crit,   color<span class="op">=</span>RED,  ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.2</span>)</span>
-<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="op">-</span>crit,   color<span class="op">=</span>RED,  ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.2</span>)</span>
-<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>ax.axvline(z_stat,  color<span class="op">=</span>BLUE, ls<span class="op">=</span><span class="st">"-"</span>,  lw<span class="op">=</span><span class="fl">2.5</span>, label<span class="op">=</span><span class="ss">f"Observed z = </span><span class="sc">{</span>z_stat<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"z"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Density"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Hypothesis Test: Where Does Our z-Statistic Land?"</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Quantity"</span>: [<span class="st">"Point estimate (θ̂)"</span>, <span class="st">"Standard error"</span>, <span class="st">"z-statistic"</span>, <span class="st">"p-value"</span>],</span>
-<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Value"</span>: [<span class="ss">f"</span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>se_analytical<span class="sc">:.5f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>z_stat<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">"</span>]</span>
-<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a>summary.style <span class="op">\</span></span>
-<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a>    .set_caption(<span class="st">"Two-Sample z-Test Summary"</span>) <span class="op">\</span></span>
-<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a>    .set_properties(<span class="op">**</span>{<span class="st">"text-align"</span>: <span class="st">"center"</span>}) <span class="op">\</span></span>
-<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a>    .hide(axis<span class="op">=</span><span class="st">"index"</span>)</span>
-<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Null hypothesis:** $H_0: \theta = 0$</span>
+<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Alternative hypothesis:** $H_1: \theta \neq 0$</span>
+<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a>The test statistic is</span>
+<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>z = \frac{\hat\theta}{SE(\hat\theta)}.</span>
+<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a>If the null is true, then large positive or negative values of $z$ should be rare. The p-value</span>
+<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a>simply measures how rare our observed statistic would be under that null model.</span>
+<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>z_stat <span class="op">=</span> theta_hat <span class="op">/</span> se_analytic</span>
+<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))</span>
+<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a>hypothesis_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Quantity"</span>: [<span class="st">"Estimated effect"</span>, <span class="st">"Standard error"</span>, <span class="st">"z-statistic"</span>, <span class="st">"Two-sided p-value"</span>],</span>
+<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Value"</span>: [<span class="ss">f"</span><span class="sc">{</span>theta_hat<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>se_analytic<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>z_stat<span class="sc">:.2f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
+<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>display_table(</span>
+<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a>    hypothesis_df,</span>
+<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Large-sample hypothesis test for equal conversion rates"</span></span>
+<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The observed test statistic falls in the rejection region of the null distribution, so the data provide strong evidence against equal conversion rates."</span></span>
+<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">500</span>)</span>
+<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a>crit <span class="op">=</span> <span class="fl">1.96</span></span>
 <span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a>With $z \approx$ <span class="in">`{python} f"{z_stat:.2f}"`</span> and $p \approx$ <span class="in">`{python} f"{p_value:.4f}"`</span>,</span>
-<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>the result is statistically significant at the conventional $\alpha = 0.05$ threshold.</span>
-<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a>In other words, if the two CTAs truly performed identically, we would observe a difference</span>
-<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a>this large or larger only about <span class="in">`{python} f"{p_value*100:.1f}"`</span>% of the time — unlikely</span>
-<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>enough that we reject $H_0$ and conclude that CTA A converts better.</span>
-<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a><span class="fu">## The T-Test as a Regression</span></span>
-<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>There's a beautiful and practical equivalence hiding in the background: the two-sample test</span>
-<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a>we just ran is **mathematically identical to a simple linear regression**. Seeing this</span>
-<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a>connection deepens intuition and points toward a much more flexible framework.</span>
-<span id="cb13-404"><a href="#cb13-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a>Stack the CTA A and CTA B observations into one dataset. Each row has an outcome</span>
-<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a>$Y_i \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ and a group indicator $D_i$ (1 for CTA A, 0 for CTA B). Fit:</span>
-<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a>$$Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i$$</span>
-<span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a>The coefficient $\beta_0$ is the expected outcome when $D_i = 0$ — that's $\pi_B$.</span>
-<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a>The coefficient $\beta_0 + \beta_1$ is the expected outcome when $D_i = 1$ — that's</span>
-<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a>$\pi_A$. So $\beta_1 = \pi_A - \pi_B = \theta$, and the OLS estimate $\hat\beta_1$ is</span>
-<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a>numerically the same as $\hat\theta = \bar{X}_A - \bar{X}_B$.</span>
-<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> t <span class="im">as</span> t_dist</span>
+<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">4.5</span>))</span>
+<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>ax.plot(x, stats.norm.pdf(x), color<span class="op">=</span>GREY, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"Null distribution: </span><span class="dv">$</span><span class="vs">N</span><span class="kw">(</span><span class="vs">0,1</span><span class="kw">)</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a>ax.fill_between(x[x <span class="op">&lt;=</span> <span class="op">-</span>crit], stats.norm.pdf(x[x <span class="op">&lt;=</span> <span class="op">-</span>crit]), color<span class="op">=</span>RED, alpha<span class="op">=</span><span class="fl">0.25</span>)</span>
+<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a>ax.fill_between(x[x <span class="op">&gt;=</span> crit], stats.norm.pdf(x[x <span class="op">&gt;=</span> crit]), color<span class="op">=</span>RED, alpha<span class="op">=</span><span class="fl">0.25</span>, label<span class="op">=</span><span class="st">"5</span><span class="sc">% r</span><span class="st">ejection regions"</span>)</span>
+<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="op">-</span>crit, color<span class="op">=</span>RED, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a>ax.axvline(crit, color<span class="op">=</span>RED, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a>ax.axvline(z_stat, color<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="fl">2.5</span>, label<span class="op">=</span><span class="ss">f"Observed z = </span><span class="sc">{</span>z_stat<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"z"</span>)</span>
+<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Density"</span>)</span>
+<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Where the Test Statistic Lands Under the Null"</span>)</span>
+<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-404"><a href="#cb13-404" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a>In this simulated experiment, the p-value is small enough to reject the null of equal conversion</span>
+<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a>rates at the conventional 5% level. The data therefore support the claim that CTA A performs</span>
+<span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a>better than CTA B.</span>
+<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a>Just as important, the effect is not only statistically significant but also practically visible.</span>
+<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a>The estimated improvement is material, and represents a meaningful relative lift over the baseline.</span>
+<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a>Whether that is worth implementing would depend on traffic, downstream revenue, and how expensive</span>
+<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a>the creative change is — but it is large enough to be interesting in a real product setting.</span>
+<span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Same Comparison as a Regression</span></span>
+<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a>There is a useful algebraic fact hiding inside the two-sample test: it is the same comparison you</span>
+<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a>would get from a simple linear regression.</span>
 <span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a><span class="co"># Stack the data</span></span>
-<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.concatenate([A, B])</span>
-<span id="cb13-423"><a href="#cb13-423" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate([np.ones(n), np.zeros(n)])</span>
-<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS by hand (or use scipy/statsmodels)</span></span>
-<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
-<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a>X_design <span class="op">=</span> sm.add_constant(D)</span>
-<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a>model    <span class="op">=</span> sm.OLS(Y, X_design).fit()</span>
+<span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a>Create one dataset with a binary outcome $Y_i$ and an indicator $D_i$ that equals 1 for CTA A and</span>
+<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a>0 for CTA B. Then fit</span>
+<span id="cb13-423"><a href="#cb13-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a>Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i.</span>
+<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a>In this model:</span>
 <span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a>beta0, beta1 <span class="op">=</span> model.params</span>
-<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a>se_b1        <span class="op">=</span> model.bse[<span class="dv">1</span>]</span>
-<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a>t_stat       <span class="op">=</span> model.tvalues[<span class="dv">1</span>]</span>
-<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a>p_reg        <span class="op">=</span> model.pvalues[<span class="dv">1</span>]</span>
-<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"β̂₀ (≈ π_B)  = </span><span class="sc">{</span>beta0<span class="sc">:.4f}</span><span class="ss">  [true π_B = </span><span class="sc">{</span>pi_B<span class="sc">}</span><span class="ss">]"</span>)</span>
-<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"β̂₁ (≈ θ)   = </span><span class="sc">{</span>beta1<span class="sc">:.4f}</span><span class="ss">  [true θ  = 0.04]"</span>)</span>
-<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"SE(β̂₁)      = </span><span class="sc">{</span>se_b1<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"t-statistic  = </span><span class="sc">{</span>t_stat<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p-value      = </span><span class="sc">{</span>p_reg<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a>comparison <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>: [<span class="st">"Point estimate"</span>, <span class="st">"Standard error"</span>, <span class="st">"Test statistic"</span>, <span class="st">"p-value"</span>],</span>
-<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Two-sample z-test"</span>: [<span class="ss">f"</span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>se_analytical<span class="sc">:.5f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>z_stat<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
-<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>    <span class="st">"OLS regression"</span>: [<span class="ss">f"</span><span class="sc">{</span>beta1<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>se_b1<span class="sc">:.5f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>t_stat<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>p_reg<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
+<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_0$ is the mean outcome for group B,</span>
+<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_0 + \beta_1$ is the mean outcome for group A,</span>
+<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>and therefore $\beta_1 = \pi_A - \pi_B = \theta$.</span>
+<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a>So the regression coefficient on the treatment indicator is literally the treatment effect.</span>
+<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.concatenate([A, B])</span>
+<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate([np.ones(n_per_group), np.zeros(n_per_group)])</span>
+<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> sm.add_constant(D)</span>
+<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a>reg <span class="op">=</span> sm.OLS(Y, X).fit(cov_type<span class="op">=</span><span class="st">"HC1"</span>)</span>
+<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Quantity"</span>: [<span class="st">"Point estimate"</span>, <span class="st">"Standard error"</span>, <span class="st">"Test statistic"</span>, <span class="st">"p-value"</span>],</span>
+<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Two-group test"</span>: [<span class="ss">f"</span><span class="sc">{</span>theta_hat<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>se_analytic<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>z_stat<span class="sc">:.2f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
+<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>    <span class="st">"OLS with robust SE"</span>: [<span class="ss">f"</span><span class="sc">{</span>reg<span class="sc">.</span>params[<span class="dv">1</span>]<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>reg<span class="sc">.</span>bse[<span class="dv">1</span>]<span class="sc">:.2%}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>reg<span class="sc">.</span>tvalues[<span class="dv">1</span>]<span class="sc">:.2f}</span><span class="ss">"</span>, <span class="ss">f"</span><span class="sc">{</span>reg<span class="sc">.</span>pvalues[<span class="dv">1</span>]<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
 <span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>comparison.style <span class="op">\</span></span>
-<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>    .set_caption(<span class="st">"Two-sample z-test vs. OLS Regression: Side-by-Side Comparison"</span>) <span class="op">\</span></span>
-<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>    .set_properties(<span class="op">**</span>{<span class="st">"text-align"</span>: <span class="st">"center"</span>}) <span class="op">\</span></span>
-<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>    .hide(axis<span class="op">=</span><span class="st">"index"</span>)</span>
-<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>The point estimates are identical — they must be, by algebra. The standard errors are</span>
-<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>*very* close but not exactly equal: OLS assumes a single pooled residual variance across</span>
-<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>both groups, while our two-sample formula lets each group have its own variance. For</span>
-<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>reasonably balanced experiments with similar conversion rates the difference is negligible.</span>
+<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>display_table(</span>
+<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>    comparison_df,</span>
+<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Two-sample test and regression give the same substantive answer"</span></span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>The coefficient estimate is the same because both procedures are computing the same difference in</span>
+<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>means. Using heteroskedasticity-robust standard errors in the regression also lines up the</span>
+<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>uncertainty calculation with the binary-outcome setting.</span>
 <span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>Why does this equivalence matter? Because the regression framework **scales**. Want to</span>
-<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>control for the day of the week a visitor arrived? Add a day-of-week dummy. Want to test</span>
-<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a>three CTA variants simultaneously? Add another indicator. Want to check whether mobile</span>
-<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a>users respond differently to the CTAs? Add an interaction term. All of that falls naturally</span>
-<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a>out of regression, and the inference works exactly as it did here.</span>
-<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Problem with Peeking</span></span>
-<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>So far we've run our experiment, waited for all 1,000 visitors per group to arrive,</span>
-<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>and *then* looked at the result. But what if your boss is impatient? What if she says:</span>
-<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a>*"Check the numbers after every 100 visitors — and if it's significant, we stop early</span>
-<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a>and call a winner."*</span>
-<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>This practice is called **peeking**, and it is one of the most common mistakes in A/B</span>
-<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>testing. Here's why it's a problem.</span>
-<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a>A single test at $\alpha = 0.05$ has a 5% chance of falsely rejecting $H_0$ when the</span>
-<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>null is actually true (a Type I error). But every time you peek, you get another roll of</span>
-<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a>the dice. Each additional look is a new opportunity to get lucky and see a spuriously</span>
-<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>significant result. Across 10 peeks, the chance of at least one false positive is much</span>
-<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>higher than 5%.</span>
-<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>Let's quantify exactly how much higher. We simulate a world where $H_0$ is **true**</span>
-<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a>($\pi_A = \pi_B = 0.20$, $\theta = 0$) and run 10,000 experiments. In each experiment,</span>
-<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>we peek at the results after 100, 200, …, 1,000 visitors per group.</span>
-<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>n_total   <span class="op">=</span> <span class="dv">1_000</span></span>
-<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a>peek_at   <span class="op">=</span> np.arange(<span class="dv">100</span>, n_total <span class="op">+</span> <span class="dv">1</span>, <span class="dv">100</span>)   <span class="co"># 10 peeks</span></span>
-<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>n_sims    <span class="op">=</span> <span class="dv">10_000</span></span>
-<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>pi_null   <span class="op">=</span> <span class="fl">0.20</span>                               <span class="co"># H0: both groups equal</span></span>
+<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>This equivalence matters because regression scales gracefully. Once the simple A/B test is written</span>
+<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>as a regression, it becomes easy to extend:</span>
+<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>adjust for day-of-week effects,</span>
+<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>test more than two variants,</span>
+<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>estimate separate effects for mobile and desktop users,</span>
+<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>or include additional pre-treatment covariates to improve precision.</span>
+<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a>So while a two-sample test is a fine starting point, regression is often the more practical working</span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>language for real experimentation.</span>
+<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Problem with Peeking</span></span>
+<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a>Everything above assumes one crucial discipline: **we decide on a sample size, run the experiment,</span>
+<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>and analyze the result once at the end**.</span>
+<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a>In practice, teams are often tempted to look early and repeatedly. Maybe the dashboard updates in</span>
+<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a>real time. Maybe a manager wants to stop as soon as one version looks better. This habit is known as</span>
+<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>**peeking**, and it breaks the usual interpretation of a 5% significance threshold.</span>
+<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>To see why, simulate a world where the null hypothesis is actually true: both CTAs convert at 20%.</span>
+<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>Now pretend we peek after every additional 100 visitors per group and stop the moment a significant</span>
+<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>result appears.</span>
+<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>pi_null <span class="op">=</span> <span class="fl">0.20</span></span>
+<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a>n_total <span class="op">=</span> <span class="dv">1_000</span></span>
+<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>peek_at <span class="op">=</span> np.arange(<span class="dv">100</span>, n_total <span class="op">+</span> <span class="dv">1</span>, <span class="dv">100</span>)</span>
+<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>n_sims <span class="op">=</span> <span class="dv">10_000</span></span>
+<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>A_null <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_null, size<span class="op">=</span>(n_sims, n_total))</span>
+<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>B_null <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_null, size<span class="op">=</span>(n_sims, n_total))</span>
 <span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>false_positives <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_sims):</span>
-<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a>    A_null <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_null, n_total)</span>
-<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a>    B_null <span class="op">=</span> rng.binomial(<span class="dv">1</span>, pi_null, n_total)</span>
-<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>    rejected <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> peek <span class="kw">in</span> peek_at:</span>
-<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a>        a_sub <span class="op">=</span> A_null[:peek]</span>
-<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>        b_sub <span class="op">=</span> B_null[:peek]</span>
-<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>        diff  <span class="op">=</span> a_sub.mean() <span class="op">-</span> b_sub.mean()</span>
-<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a>        se_p  <span class="op">=</span> np.sqrt(a_sub.mean()<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>a_sub.mean())<span class="op">/</span>peek <span class="op">+</span></span>
-<span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a>                        b_sub.mean()<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>b_sub.mean())<span class="op">/</span>peek)</span>
-<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> se_p <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>            z_p <span class="op">=</span> diff <span class="op">/</span> se_p</span>
-<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a>            p_p <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_p)))</span>
-<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> p_p <span class="op">&lt;</span> <span class="fl">0.05</span>:</span>
-<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a>                rejected <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span>   <span class="co"># stop the experiment early, as the boss wants</span></span>
-<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> rejected:</span>
-<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a>        false_positives <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>fpr <span class="op">=</span> false_positives <span class="op">/</span> n_sims</span>
-<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nominal false positive rate (single test): 5.0%"</span>)</span>
-<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Empirical false positive rate (10 peeks):  </span><span class="sc">{</span>fpr<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
-<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Peeking dramatically inflates the false positive rate above the nominal 5% level."</span></span>
-<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a>categories <span class="op">=</span> [<span class="st">"Single test</span><span class="ch">\n</span><span class="st">(no peeking)"</span>, <span class="st">"10 peeks</span><span class="ch">\n</span><span class="st">(impatient boss)"</span>]</span>
-<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a>rates      <span class="op">=</span> [<span class="fl">0.05</span>, fpr]</span>
-<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a>colors_bar <span class="op">=</span> [GREEN, RED]</span>
-<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a>bars <span class="op">=</span> ax.bar(categories, [r <span class="op">*</span> <span class="dv">100</span> <span class="cf">for</span> r <span class="kw">in</span> rates], color<span class="op">=</span>colors_bar,</span>
-<span id="cb13-538"><a href="#cb13-538" aria-hidden="true" tabindex="-1"></a>              width<span class="op">=</span><span class="fl">0.4</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>, linewidth<span class="op">=</span><span class="fl">1.2</span>)</span>
-<span id="cb13-539"><a href="#cb13-539" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">5</span>, color<span class="op">=</span>GREY, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">"Nominal 5</span><span class="sc">% le</span><span class="st">vel"</span>)</span>
-<span id="cb13-540"><a href="#cb13-540" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> bar, rate <span class="kw">in</span> <span class="bu">zip</span>(bars, rates):</span>
-<span id="cb13-541"><a href="#cb13-541" aria-hidden="true" tabindex="-1"></a>    ax.text(bar.get_x() <span class="op">+</span> bar.get_width()<span class="op">/</span><span class="dv">2</span>,</span>
-<span id="cb13-542"><a href="#cb13-542" aria-hidden="true" tabindex="-1"></a>            bar.get_height() <span class="op">+</span> <span class="fl">0.5</span>,</span>
-<span id="cb13-543"><a href="#cb13-543" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>rate<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>,</span>
-<span id="cb13-544"><a href="#cb13-544" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"bottom"</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-545"><a href="#cb13-545" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"False Positive Rate (%)"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb13-546"><a href="#cb13-546" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"How Peeking Inflates the Type I Error Rate"</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb13-547"><a href="#cb13-547" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="bu">max</span>(rates)<span class="op">*</span><span class="dv">100</span> <span class="op">*</span> <span class="fl">1.25</span>)</span>
-<span id="cb13-548"><a href="#cb13-548" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb13-549"><a href="#cb13-549" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-550"><a href="#cb13-550" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb13-551"><a href="#cb13-551" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-552"><a href="#cb13-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-553"><a href="#cb13-553" aria-hidden="true" tabindex="-1"></a>The result is stark. A single properly-timed test keeps the false positive rate at its</span>
-<span id="cb13-554"><a href="#cb13-554" aria-hidden="true" tabindex="-1"></a>nominal 5%. But peeking 10 times — and stopping as soon as *any* peek is significant —</span>
-<span id="cb13-555"><a href="#cb13-555" aria-hidden="true" tabindex="-1"></a>inflates that rate to around **`{python} f"{fpr*100:.0f}"`%**. That means roughly one in</span>
-<span id="cb13-556"><a href="#cb13-556" aria-hidden="true" tabindex="-1"></a>four experiments will declare a winner that doesn't actually exist, simply because we kept</span>
-<span id="cb13-557"><a href="#cb13-557" aria-hidden="true" tabindex="-1"></a>looking.</span>
-<span id="cb13-558"><a href="#cb13-558" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-559"><a href="#cb13-559" aria-hidden="true" tabindex="-1"></a>The practical lesson: **decide your sample size in advance, run the experiment to</span>
-<span id="cb13-560"><a href="#cb13-560" aria-hidden="true" tabindex="-1"></a>completion, and look at the results once.** If you genuinely need to peek (e.g., to catch</span>
-<span id="cb13-561"><a href="#cb13-561" aria-hidden="true" tabindex="-1"></a>a catastrophic failure), use methods designed for sequential testing — such as sequential</span>
-<span id="cb13-562"><a href="#cb13-562" aria-hidden="true" tabindex="-1"></a>probability ratio tests or alpha-spending functions — that maintain valid error control</span>
-<span id="cb13-563"><a href="#cb13-563" aria-hidden="true" tabindex="-1"></a>across multiple looks. Classical frequentist tests, run as described in this post, are</span>
-<span id="cb13-564"><a href="#cb13-564" aria-hidden="true" tabindex="-1"></a>calibrated for a single look only.</span>
+<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>cum_A <span class="op">=</span> A_null.cumsum(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>cum_B <span class="op">=</span> B_null.cumsum(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a>peek_idx <span class="op">=</span> peek_at <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a>mean_A_peeks <span class="op">=</span> cum_A[:, peek_idx] <span class="op">/</span> peek_at</span>
+<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a>mean_B_peeks <span class="op">=</span> cum_B[:, peek_idx] <span class="op">/</span> peek_at</span>
+<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>diff_peeks <span class="op">=</span> mean_A_peeks <span class="op">-</span> mean_B_peeks</span>
+<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a>se_peeks <span class="op">=</span> np.sqrt(mean_A_peeks <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> mean_A_peeks) <span class="op">/</span> peek_at <span class="op">+</span> mean_B_peeks <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> mean_B_peeks) <span class="op">/</span> peek_at)</span>
+<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>z_peeks <span class="op">=</span> np.divide(diff_peeks, se_peeks, out<span class="op">=</span>np.zeros_like(diff_peeks), where<span class="op">=</span>se_peeks <span class="op">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a>p_peeks <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(np.<span class="bu">abs</span>(z_peeks)))</span>
+<span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a>reject_matrix <span class="op">=</span> p_peeks <span class="op">&lt;</span> <span class="fl">0.05</span></span>
+<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>fpr_by_look <span class="op">=</span> np.maximum.accumulate(reject_matrix, axis<span class="op">=</span><span class="dv">1</span>).mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a>final_fpr <span class="op">=</span> fpr_by_look[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False positive rate with one final look only: </span><span class="sc">{</span>reject_matrix[:, <span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
+<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False positive rate with optional stopping:   </span><span class="sc">{</span>final_fpr<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
+<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Each additional look at the data increases the chance of a false discovery when no real treatment effect exists."</span></span>
+<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>ax.plot(np.arange(<span class="dv">1</span>, <span class="bu">len</span>(peek_at) <span class="op">+</span> <span class="dv">1</span>), fpr_by_look, marker<span class="op">=</span><span class="st">"o"</span>, color<span class="op">=</span>RED, lw<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="fl">0.05</span>, color<span class="op">=</span>GREY, ls<span class="op">=</span><span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">"Nominal 5</span><span class="sc">% le</span><span class="st">vel"</span>)</span>
+<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.arange(<span class="dv">1</span>, <span class="bu">len</span>(peek_at) <span class="op">+</span> <span class="dv">1</span>))</span>
+<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Number of looks at the data"</span>)</span>
+<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Probability of at least one false positive"</span>)</span>
+<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_major_formatter(percent_formatter(<span class="dv">0</span>))</span>
+<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Peeking Inflates the Type I Error Rate"</span>)</span>
+<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a>The key lesson is that a 5% test is calibrated for **one planned analysis**, not for a running</span>
+<span id="cb13-538"><a href="#cb13-538" aria-hidden="true" tabindex="-1"></a>sequence of opportunistic checks. By the tenth look, the probability of declaring a winner when no</span>
+<span id="cb13-539"><a href="#cb13-539" aria-hidden="true" tabindex="-1"></a>winner exists has inflated to roughly 20% — far above the intended 5% level.</span>
+<span id="cb13-540"><a href="#cb13-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-541"><a href="#cb13-541" aria-hidden="true" tabindex="-1"></a>That is why experienced experimenters pre-register a stopping rule, fix a sample size in advance,</span>
+<span id="cb13-542"><a href="#cb13-542" aria-hidden="true" tabindex="-1"></a>or use methods specifically designed for sequential monitoring. Without those safeguards, the false</span>
+<span id="cb13-543"><a href="#cb13-543" aria-hidden="true" tabindex="-1"></a>positive rate drifts upward and the experiment becomes much easier to fool.</span>
+<span id="cb13-544"><a href="#cb13-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-545"><a href="#cb13-545" aria-hidden="true" tabindex="-1"></a><span class="fu">## Takeaways</span></span>
+<span id="cb13-546"><a href="#cb13-546" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-547"><a href="#cb13-547" aria-hidden="true" tabindex="-1"></a>This single A/B test illustrates much of the logic behind classical frequentist inference.</span>
+<span id="cb13-548"><a href="#cb13-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-549"><a href="#cb13-549" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **Law of Large Numbers** explains why sample conversion rates stabilize.</span>
+<span id="cb13-550"><a href="#cb13-550" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **bootstrap** gives a data-driven way to quantify uncertainty.</span>
+<span id="cb13-551"><a href="#cb13-551" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **Central Limit Theorem** justifies Normal-based inference for large samples.</span>
+<span id="cb13-552"><a href="#cb13-552" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **hypothesis test** turns an observed effect into a formal statement about evidence.</span>
+<span id="cb13-553"><a href="#cb13-553" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A two-group comparison can be rewritten as a **regression**, which opens the door to richer models.</span>
+<span id="cb13-554"><a href="#cb13-554" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Peeking** invalidates the usual significance threshold unless the analysis is adjusted for it.</span>
+<span id="cb13-555"><a href="#cb13-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-556"><a href="#cb13-556" aria-hidden="true" tabindex="-1"></a>For this simulated experiment, the conclusion is straightforward: CTA A outperforms CTA B, and the</span>
+<span id="cb13-557"><a href="#cb13-557" aria-hidden="true" tabindex="-1"></a>estimated improvement is large enough to be both statistically credible and practically interesting.</span>
+<span id="cb13-558"><a href="#cb13-558" aria-hidden="true" tabindex="-1"></a>More importantly, the path to that conclusion matters. Good experimentation is not just about asking</span>
+<span id="cb13-559"><a href="#cb13-559" aria-hidden="true" tabindex="-1"></a>which variant won. It is about designing the test so that the answer can be trusted.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
