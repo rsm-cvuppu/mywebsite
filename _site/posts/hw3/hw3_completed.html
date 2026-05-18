@@ -267,7 +267,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the Data</h2>
 <section id="patent-counts-by-customer-status" class="level3">
 <h3 class="anchored" data-anchor-id="patent-counts-by-customer-status">Patent Counts by Customer Status</h3>
-<div id="b06cf571" class="cell" data-execution_count="2">
+<div id="0b9942f1" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -281,7 +281,7 @@ window.Quarto = {
 </section>
 <section id="regional-and-age-differences" class="level3">
 <h3 class="anchored" data-anchor-id="regional-and-age-differences">Regional and Age Differences</h3>
-<div id="489d2bd4" class="cell" data-execution_count="3">
+<div id="8fcebb9c" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -325,7 +325,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 </section>
 <section id="coding-and-plotting-the-log-likelihood" class="level3">
 <h3 class="anchored" data-anchor-id="coding-and-plotting-the-log-likelihood">Coding and Plotting the Log-Likelihood</h3>
-<div id="5cd12f4e" class="cell" data-execution_count="4">
+<div id="02bc6e38" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> d[<span class="st">'patents'</span>].values</span>
@@ -337,7 +337,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(<span class="op">-</span>lam <span class="op">+</span> Y <span class="op">*</span> np.log(lam) <span class="op">-</span> gammaln(Y <span class="op">+</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="1ca2974f" class="cell" data-execution_count="5">
+<div id="485030d7" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -350,7 +350,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 </section>
 <section id="numerical-confirmation" class="level3">
 <h3 class="anchored" data-anchor-id="numerical-confirmation">Numerical Confirmation</h3>
-<div id="8bf739ae" class="cell" data-execution_count="6">
+<div id="7fdb91a7" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>result_simple <span class="op">=</span> minimize(</span>
@@ -387,7 +387,7 @@ Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta)
 <p><span class="math display">\[
 \ell(\beta) = \sum_{i=1}^n \left[-\exp(X_i'\beta) + Y_i\,(X_i'\beta) - \log(Y_i!)\right]
 \]</span></p>
-<div id="198e7726" class="cell" data-execution_count="7">
+<div id="e558e018" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> poisson_regression_loglikelihood(beta, Y, X):</span>
@@ -399,7 +399,7 @@ Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta)
 </section>
 <section id="building-the-design-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="building-the-design-matrix">Building the Design Matrix</h3>
-<div id="b16943a1" class="cell" data-execution_count="8">
+<div id="4806f271" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># South is the omitted (reference) region</span></span>
@@ -427,7 +427,7 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 </section>
 <section id="estimating-hatbeta-with-scipy.optimize" class="level3">
 <h3 class="anchored" data-anchor-id="estimating-hatbeta-with-scipy.optimize">Estimating <span class="math inline">\(\hat\beta\)</span> with <code>scipy.optimize</code></h3>
-<div id="879e655d" class="cell" data-execution_count="9">
+<div id="33523191" class="cell" data-execution_count="9">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Warm-start from GLM to ensure numerical stability</span></span>
@@ -449,7 +449,7 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 <p><span class="math display">\[
 \widehat{\operatorname{Var}}(\hat{\beta}) \approx \left[-\nabla^2 \ell(\hat{\beta})\right]^{-1}
 \]</span></p>
-<div id="8106dbe7" class="cell" data-execution_count="10">
+<div id="e7998c73" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> neg_ll(b):</span>
@@ -470,13 +470,13 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 </section>
 <section id="comparison-with-statsmodels-glm" class="level3">
 <h3 class="anchored" data-anchor-id="comparison-with-statsmodels-glm">Comparison with <code>statsmodels</code> GLM</h3>
-<div id="1a3df949" class="cell" data-execution_count="11">
+<div id="fcd711a2" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>glm_fit <span class="op">=</span> sm.GLM(Y, X, family<span class="op">=</span>sm.families.Poisson()).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="402c19c8" class="cell" data-execution_count="12">
+<div id="719b0ba5" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display" data-execution_count="12">
 <style>
       .tbl1 { border-collapse: collapse; width: 100%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -575,7 +575,7 @@ Manual optim() vs. statsmodels GLM</caption>
 </section>
 <section id="interpreting-the-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="interpreting-the-coefficients">Interpreting the Coefficients</h3>
-<div id="6c2d77c0" class="cell" data-execution_count="13">
+<div id="c6a2900a" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display" data-execution_count="13">
 <style>
       .tbl2 { border-collapse: collapse; width: 72%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -669,7 +669,7 @@ With multiplicative effects exp(β̂)</caption>
 <section id="average-marginal-effect-via-counterfactual-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="average-marginal-effect-via-counterfactual-prediction">Average Marginal Effect via Counterfactual Prediction</h3>
 <p>The 23% multiplicative lift from the customer coefficient is harder to communicate than “X additional patents.” Moreover, the absolute effect varies across firms — a high-rate firm gains more patents in absolute terms from the same proportional boost than a low-rate firm does. To get a single interpretable number we use <strong>counterfactual prediction</strong>: predict each firm’s expected patent count <em>with</em> and <em>without</em> customer status, holding every other covariate at its observed value.</p>
-<div id="95e45a66" class="cell" data-execution_count="14">
+<div id="95856bfb" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>beta_hat <span class="op">=</span> result_reg.x</span>
@@ -689,7 +689,7 @@ With multiplicative effects exp(β̂)</caption>
 <pre><code>Average treatment effect: 0.7928 additional patents over 5 years</code></pre>
 </div>
 </div>
-<div id="ff166a54" class="cell" data-execution_count="15">
+<div id="fd430697" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
