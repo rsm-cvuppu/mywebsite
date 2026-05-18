@@ -33,7 +33,7 @@
 <h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the Data</h2>
 <section id="patent-counts-by-customer-status" class="level3">
 <h3 class="anchored" data-anchor-id="patent-counts-by-customer-status">Patent Counts by Customer Status</h3>
-<div id="57f76bbf" class="cell" data-execution_count="2">
+<div id="b06cf571" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -47,7 +47,7 @@
 </section>
 <section id="regional-and-age-differences" class="level3">
 <h3 class="anchored" data-anchor-id="regional-and-age-differences">Regional and Age Differences</h3>
-<div id="9b3ac5e9" class="cell" data-execution_count="3">
+<div id="489d2bd4" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -81,7 +81,7 @@
 </section>
 <section id="coding-and-plotting-the-log-likelihood" class="level3">
 <h3 class="anchored" data-anchor-id="coding-and-plotting-the-log-likelihood">Coding and Plotting the Log-Likelihood</h3>
-<div id="45cd119a" class="cell" data-execution_count="4">
+<div id="5cd12f4e" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">Y <span class="op" style="color: #5E5E5E;
@@ -131,7 +131,7 @@ background-color: null;
 font-style: inherit;">1</span>))</span></code></pre></div></div>
 </details>
 </div>
-<div id="831d99ec" class="cell" data-execution_count="5">
+<div id="1ca2974f" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -144,7 +144,7 @@ font-style: inherit;">1</span>))</span></code></pre></div></div>
 </section>
 <section id="numerical-confirmation" class="level3">
 <h3 class="anchored" data-anchor-id="numerical-confirmation">Numerical Confirmation</h3>
-<div id="dc4d07ca" class="cell" data-execution_count="6">
+<div id="8bf739ae" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">result_simple <span class="op" style="color: #5E5E5E;
@@ -220,7 +220,7 @@ Sample mean:    Ȳ = 3.684667</code></pre>
 <h3 class="anchored" data-anchor-id="the-regression-log-likelihood">The Regression Log-Likelihood</h3>
 <p>Replacing the scalar <img src="https://latex.codecogs.com/png.latex?%5Clambda"> with <img src="https://latex.codecogs.com/png.latex?%5Cexp(X_i'%5Cbeta)">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cell(%5Cbeta)%20=%20%5Csum_%7Bi=1%7D%5En%20%5Cleft%5B-%5Cexp(X_i'%5Cbeta)%20+%20Y_i%5C,(X_i'%5Cbeta)%20-%20%5Clog(Y_i!)%5Cright%5D%0A"></p>
-<div id="aff3a3fb" class="cell" data-execution_count="7">
+<div id="198e7726" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
@@ -266,7 +266,7 @@ font-style: inherit;">1</span>))</span></code></pre></div></div>
 </section>
 <section id="building-the-design-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="building-the-design-matrix">Building the Design Matrix</h3>
-<div id="ab1f9670" class="cell" data-execution_count="8">
+<div id="b16943a1" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
@@ -374,7 +374,7 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 </section>
 <section id="estimating-hatbeta-with-scipy.optimize" class="level3">
 <h3 class="anchored" data-anchor-id="estimating-hatbeta-with-scipy.optimize">Estimating <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta"> with <code>scipy.optimize</code></h3>
-<div id="79bdcec8" class="cell" data-execution_count="9">
+<div id="879e655d" class="cell" data-execution_count="9">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
@@ -435,7 +435,7 @@ font-style: inherit;">"</span>)</span></code></pre></div></div>
 </div>
 <p><strong>Standard errors from the Hessian.</strong> Near the MLE the log-likelihood surface is locally quadratic, so the second-derivative matrix (Hessian) captures how sharply peaked it is in each parameter direction. A sharper peak means less uncertainty. The asymptotic covariance matrix of <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta"> is the inverse of the <em>negative</em> Hessian:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cwidehat%7B%5Coperatorname%7BVar%7D%7D(%5Chat%7B%5Cbeta%7D)%20%5Capprox%20%5Cleft%5B-%5Cnabla%5E2%20%5Cell(%5Chat%7B%5Cbeta%7D)%5Cright%5D%5E%7B-1%7D%0A"></p>
-<div id="3cf8bee4" class="cell" data-execution_count="10">
+<div id="8106dbe7" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
@@ -498,7 +498,7 @@ font-style: inherit;">=</span> np.sqrt(np.diag(np.linalg.inv(H)))</span></code><
 </section>
 <section id="comparison-with-statsmodels-glm" class="level3">
 <h3 class="anchored" data-anchor-id="comparison-with-statsmodels-glm">Comparison with <code>statsmodels</code> GLM</h3>
-<div id="01c1b34c" class="cell" data-execution_count="11">
+<div id="1a3df949" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">glm_fit <span class="op" style="color: #5E5E5E;
@@ -508,7 +508,7 @@ background-color: null;
 font-style: inherit;">=</span>sm.families.Poisson()).fit()</span></code></pre></div></div>
 </details>
 </div>
-<div id="cd601bc8" class="cell" data-execution_count="12">
+<div id="402c19c8" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display" data-execution_count="12">
 <style>
       .tbl1 { border-collapse: collapse; width: 100%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -607,7 +607,7 @@ Manual optim() vs. statsmodels GLM</caption>
 </section>
 <section id="interpreting-the-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="interpreting-the-coefficients">Interpreting the Coefficients</h3>
-<div id="37f7144e" class="cell" data-execution_count="13">
+<div id="6c2d77c0" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display" data-execution_count="13">
 <style>
       .tbl2 { border-collapse: collapse; width: 72%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -701,7 +701,7 @@ With multiplicative effects exp(β̂)</caption>
 <section id="average-marginal-effect-via-counterfactual-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="average-marginal-effect-via-counterfactual-prediction">Average Marginal Effect via Counterfactual Prediction</h3>
 <p>The 23% multiplicative lift from the customer coefficient is harder to communicate than “X additional patents.” Moreover, the absolute effect varies across firms — a high-rate firm gains more patents in absolute terms from the same proportional boost than a low-rate firm does. To get a single interpretable number we use <strong>counterfactual prediction</strong>: predict each firm’s expected patent count <em>with</em> and <em>without</em> customer status, holding every other covariate at its observed value.</p>
-<div id="1014c4f1" class="cell" data-execution_count="14">
+<div id="95e45a66" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">beta_hat <span class="op" style="color: #5E5E5E;
@@ -773,7 +773,7 @@ font-style: inherit;"> additional patents over 5 years"</span>)</span></code></p
 <pre><code>Average treatment effect: 0.7928 additional patents over 5 years</code></pre>
 </div>
 </div>
-<div id="dcd51d6e" class="cell" data-execution_count="15">
+<div id="ff166a54" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
