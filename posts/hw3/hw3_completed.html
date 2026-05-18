@@ -9,7 +9,7 @@
 <meta name="author" content="Hari Chandana Vuppu">
 <meta name="dcterms.date" content="2026-05-17">
 
-<title>Poisson Regression and Maximum Likelihood Estimation</title>
+<title>Poisson Regression and Maximum Likelihood Estimation – mywebsite</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -60,18 +60,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="hw3_completed_files/libs/clipboard/clipboard.min.js"></script>
-<script src="hw3_completed_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="hw3_completed_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="hw3_completed_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="hw3_completed_files/libs/quarto-html/popper.min.js"></script>
-<script src="hw3_completed_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="hw3_completed_files/libs/quarto-html/anchor.min.js"></script>
-<link href="hw3_completed_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="hw3_completed_files/libs/quarto-html/quarto-syntax-highlighting-3857c22e486953263cef44b5ce82424e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="hw3_completed_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="hw3_completed_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="hw3_completed_files/libs/bootstrap/bootstrap-91a42029b1538032e5c1f98914bc1d65.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-3857c22e486953263cef44b5ce82424e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-54816a8c4515a26badb8ba45cd03519b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -106,14 +139,83 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="quarto-light">
+<body class="nav-fixed quarto-light">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">mywebsite</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://bsky.app/"> <i class="bi bi-bluesky" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Poisson Regression and Maximum Likelihood Estimation</h1>
+            <p class="subtitle lead">A Case Study of Blueprinty’s Software and Patent Awards</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Hari Chandana Vuppu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 17, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
@@ -145,41 +247,15 @@ window.Quarto = {
   </ul></li>
   </ul>
 </nav>
-</div>
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Poisson Regression and Maximum Likelihood Estimation</h1>
-<p class="subtitle lead">A Case Study of Blueprinty’s Software and Patent Awards</p>
-</div>
-
-
-
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Hari Chandana Vuppu </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">May 17, 2026</p>
     </div>
-  </div>
-  
-    
-  </div>
-  
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
-</header>
 
 
+
+<p>format: html: toc: true toc-depth: 3 code-fold: show theme: cosmo highlight-style: github self-contained: true</p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Does better software lead to more patents? That is the central question Blueprinty — a small firm that makes blueprint-drafting software tailored for US patent applications — wants its marketing team to answer.</p>
@@ -191,7 +267,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the Data</h2>
 <section id="patent-counts-by-customer-status" class="level3">
 <h3 class="anchored" data-anchor-id="patent-counts-by-customer-status">Patent Counts by Customer Status</h3>
-<div id="1d51cac9" class="cell" data-execution_count="2">
+<div id="57f76bbf" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -205,7 +281,7 @@ window.Quarto = {
 </section>
 <section id="regional-and-age-differences" class="level3">
 <h3 class="anchored" data-anchor-id="regional-and-age-differences">Regional and Age Differences</h3>
-<div id="519653db" class="cell" data-execution_count="3">
+<div id="9b3ac5e9" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -249,7 +325,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 </section>
 <section id="coding-and-plotting-the-log-likelihood" class="level3">
 <h3 class="anchored" data-anchor-id="coding-and-plotting-the-log-likelihood">Coding and Plotting the Log-Likelihood</h3>
-<div id="07c4ec16" class="cell" data-execution_count="4">
+<div id="45cd119a" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> d[<span class="st">'patents'</span>].values</span>
@@ -261,7 +337,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(<span class="op">-</span>lam <span class="op">+</span> Y <span class="op">*</span> np.log(lam) <span class="op">-</span> gammaln(Y <span class="op">+</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="a58031f3" class="cell" data-execution_count="5">
+<div id="831d99ec" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -274,7 +350,7 @@ L(\lambda \mid \mathbf{Y}) = \prod_{i=1}^{n} \frac{e^{-\lambda}\,\lambda^{Y_i}}{
 </section>
 <section id="numerical-confirmation" class="level3">
 <h3 class="anchored" data-anchor-id="numerical-confirmation">Numerical Confirmation</h3>
-<div id="f54750ce" class="cell" data-execution_count="6">
+<div id="dc4d07ca" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>result_simple <span class="op">=</span> minimize(</span>
@@ -311,7 +387,7 @@ Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta)
 <p><span class="math display">\[
 \ell(\beta) = \sum_{i=1}^n \left[-\exp(X_i'\beta) + Y_i\,(X_i'\beta) - \log(Y_i!)\right]
 \]</span></p>
-<div id="6cf7f936" class="cell" data-execution_count="7">
+<div id="aff3a3fb" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> poisson_regression_loglikelihood(beta, Y, X):</span>
@@ -323,7 +399,7 @@ Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta)
 </section>
 <section id="building-the-design-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="building-the-design-matrix">Building the Design Matrix</h3>
-<div id="b27683e5" class="cell" data-execution_count="8">
+<div id="ab1f9670" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># South is the omitted (reference) region</span></span>
@@ -351,7 +427,7 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 </section>
 <section id="estimating-hatbeta-with-scipy.optimize" class="level3">
 <h3 class="anchored" data-anchor-id="estimating-hatbeta-with-scipy.optimize">Estimating <span class="math inline">\(\hat\beta\)</span> with <code>scipy.optimize</code></h3>
-<div id="ec372f68" class="cell" data-execution_count="9">
+<div id="79bdcec8" class="cell" data-execution_count="9">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Warm-start from GLM to ensure numerical stability</span></span>
@@ -373,7 +449,7 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 <p><span class="math display">\[
 \widehat{\operatorname{Var}}(\hat{\beta}) \approx \left[-\nabla^2 \ell(\hat{\beta})\right]^{-1}
 \]</span></p>
-<div id="3bf26f40" class="cell" data-execution_count="10">
+<div id="3cf8bee4" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> neg_ll(b):</span>
@@ -394,13 +470,13 @@ Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'So
 </section>
 <section id="comparison-with-statsmodels-glm" class="level3">
 <h3 class="anchored" data-anchor-id="comparison-with-statsmodels-glm">Comparison with <code>statsmodels</code> GLM</h3>
-<div id="a31eb1f6" class="cell" data-execution_count="11">
+<div id="01c1b34c" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>glm_fit <span class="op">=</span> sm.GLM(Y, X, family<span class="op">=</span>sm.families.Poisson()).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="9edab514" class="cell" data-execution_count="12">
+<div id="cd601bc8" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display" data-execution_count="12">
 <style>
       .tbl1 { border-collapse: collapse; width: 100%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -499,7 +575,7 @@ Manual optim() vs. statsmodels GLM</caption>
 </section>
 <section id="interpreting-the-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="interpreting-the-coefficients">Interpreting the Coefficients</h3>
-<div id="2ed9d567" class="cell" data-execution_count="13">
+<div id="37f7144e" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display" data-execution_count="13">
 <style>
       .tbl2 { border-collapse: collapse; width: 72%; font-family: Georgia, serif; font-size: 13.5px; }
@@ -593,7 +669,7 @@ With multiplicative effects exp(β̂)</caption>
 <section id="average-marginal-effect-via-counterfactual-prediction" class="level3">
 <h3 class="anchored" data-anchor-id="average-marginal-effect-via-counterfactual-prediction">Average Marginal Effect via Counterfactual Prediction</h3>
 <p>The 23% multiplicative lift from the customer coefficient is harder to communicate than “X additional patents.” Moreover, the absolute effect varies across firms — a high-rate firm gains more patents in absolute terms from the same proportional boost than a low-rate firm does. To get a single interpretable number we use <strong>counterfactual prediction</strong>: predict each firm’s expected patent count <em>with</em> and <em>without</em> customer status, holding every other covariate at its observed value.</p>
-<div id="c844d5d1" class="cell" data-execution_count="14">
+<div id="1014c4f1" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>beta_hat <span class="op">=</span> result_reg.x</span>
@@ -613,7 +689,7 @@ With multiplicative effects exp(β̂)</caption>
 <pre><code>Average treatment effect: 0.7928 additional patents over 5 years</code></pre>
 </div>
 </div>
-<div id="4c0d6ebc" class="cell" data-execution_count="15">
+<div id="dcd51d6e" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -629,11 +705,12 @@ With multiplicative effects exp(β̂)</caption>
 <p>The evidence is consistent with Blueprinty’s marketing claim: <strong>after controlling for firm age and region, customers patent at a meaningfully higher rate</strong>, gaining roughly 0.79 additional patents per five years. For a firm whose competitiveness depends on intellectual property protection, that is a non-trivial gain.</p>
 <p>That said, this is an <strong>observational study</strong>, not a randomized experiment. Firms self-selected into Blueprinty’s software, and we cannot rule out every unobserved confounder — quality of in-house patent counsel, R&amp;D budget, corporate culture around IP, or the intrinsic patentability of the firm’s technology. Any of these could partially explain the patent-count gap even after controlling for age and region.</p>
 <p>The honest conclusion: the data are <strong>consistent with</strong> Blueprinty’s software improving patent success, and the association survives controls for the most salient confounders. A causal claim would require either a randomized rollout or a credible natural experiment generating as-good-as-random variation in adoption.</p>
+
+
 </section>
 </section>
 
-</main>
-<!-- /main column -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -707,7 +784,7 @@ With multiplicative effects exp(β̂)</caption>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/rsm-cvuppu\.github\.io\/mywebsite");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

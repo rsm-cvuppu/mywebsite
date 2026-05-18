@@ -10,7 +10,794 @@
 <atom:link href="https://rsm-cvuppu.github.io/mywebsite/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.9.13</generator>
-<lastBuildDate>Wed, 22 Apr 2026 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 17 May 2026 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Poisson Regression and Maximum Likelihood Estimation</title>
+  <dc:creator>Hari Chandana Vuppu</dc:creator>
+  <link>https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>format: html: toc: true toc-depth: 3 code-fold: show theme: cosmo highlight-style: github self-contained: true</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Does better software lead to more patents? That is the central question Blueprinty — a small firm that makes blueprint-drafting software tailored for US patent applications — wants its marketing team to answer.</p>
+<p>The intuition is simple: Blueprinty’s software streamlines the blueprint-preparation process required by the US Patent Office. If it genuinely improves submission quality, firms using it should receive more patent approvals. To investigate, Blueprinty assembled data on <strong>1,500 mature (non-startup) engineering firms</strong>, recording the number of patents each firm earned over the last five years, its geographic region, its age since incorporation, and whether it subscribes to Blueprinty.</p>
+<p>The complication is that Blueprinty’s customers are <strong>not randomly assigned</strong>. Firms that seek out a specialized patent-drafting tool may already be more patent-active, better resourced, or clustered in innovation-dense regions. Any raw comparison of patent counts between customers and non-customers therefore confounds the <em>effect of the software</em> with <em>pre-existing differences between the firms that adopted it</em>. To make a credible marketing claim we need a model that holds firm characteristics constant — which is exactly what Poisson regression, estimated by maximum likelihood, lets us do.</p>
+<hr>
+</section>
+<section id="exploring-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the Data</h2>
+<section id="patent-counts-by-customer-status" class="level3">
+<h3 class="anchored" data-anchor-id="patent-counts-by-customer-status">Patent Counts by Customer Status</h3>
+<div id="57f76bbf" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed_files/figure-html/cell-3-output-1.png" width="1416" height="561" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Blueprinty customers average <strong>4.13</strong> patents over the five-year window, compared with <strong>3.47</strong> for non-customers — a gap of about two-thirds of a patent. Both distributions are right-skewed and concentrated in the 0–6 range, which is exactly the kind of count data that motivates a Poisson model. The raw difference looks meaningful, but we cannot attribute it to the software until we check whether customers and non-customers differ along other dimensions.</p>
+<hr>
+</section>
+<section id="regional-and-age-differences" class="level3">
+<h3 class="anchored" data-anchor-id="regional-and-age-differences">Regional and Age Differences</h3>
+<div id="9b3ac5e9" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed_files/figure-html/cell-4-output-1.png" width="1545" height="569" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Two patterns stand out. First, customers are <strong>heavily concentrated in the Northeast</strong>: 68% of all customers are Northeast firms, versus only 27% of non-customers. Second, customers are modestly <strong>younger</strong> on average (26.9 years vs.&nbsp;26.1 years).</p>
+<p>Both differences matter for what follows. If Northeast firms patent more actively — perhaps because that region concentrates innovation hubs — the customer group’s higher patent counts may partly reflect geography, not software. Similarly, if mid-life firms are at peak patenting productivity, the customer age skew could inflate the raw comparison. Controlling for both in a regression lets us isolate the marginal association with Blueprinty.</p>
+<hr>
+</section>
+</section>
+<section id="a-simple-poisson-model-via-maximum-likelihood" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-poisson-model-via-maximum-likelihood">A Simple Poisson Model via Maximum Likelihood</h2>
+<section id="why-poisson" class="level3">
+<h3 class="anchored" data-anchor-id="why-poisson">Why Poisson?</h3>
+<p>Patent counts are non-negative integers — the Normal distribution, which assigns positive probability to negative and fractional values, is a poor structural fit. The <strong>Poisson distribution</strong> is defined on <img src="https://latex.codecogs.com/png.latex?%5C%7B0,%201,%202,%20%5Cldots%5C%7D">, has a single positive parameter <img src="https://latex.codecogs.com/png.latex?%5Clambda"> equal to both its mean and variance, and arises naturally from models of events occurring at a constant rate. It is the textbook starting point for count outcomes like patent awards.</p>
+</section>
+<section id="deriving-the-log-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-the-log-likelihood">Deriving the Log-Likelihood</h3>
+<p>Each firm’s count <img src="https://latex.codecogs.com/png.latex?Y_i"> is modeled as an independent draw from <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BPoisson%7D(%5Clambda)">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Af(Y_i%20%5Cmid%20%5Clambda)%20=%20%5Cfrac%7Be%5E%7B-%5Clambda%7D%5C,%5Clambda%5E%7BY_i%7D%7D%7BY_i!%7D%0A"></p>
+<p>The <strong>joint likelihood</strong> for <img src="https://latex.codecogs.com/png.latex?n"> independent observations is the product of the individual densities:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL(%5Clambda%20%5Cmid%20%5Cmathbf%7BY%7D)%20=%20%5Cprod_%7Bi=1%7D%5E%7Bn%7D%20%5Cfrac%7Be%5E%7B-%5Clambda%7D%5C,%5Clambda%5E%7BY_i%7D%7D%7BY_i!%7D%0A"></p>
+<p>Taking the natural log converts the product into a tractable sum:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cell(%5Clambda)%20=%20%5Csum_%7Bi=1%7D%5En%20%5Cleft(-%5Clambda%20+%20Y_i%20%5Clog%20%5Clambda%20-%20%5Clog(Y_i!)%5Cright)%0A=%20-n%5Clambda%20+%20%5Clog(%5Clambda)%5C!%5Csum_%7Bi=1%7D%5En%20Y_i%20-%20%5Csum_%7Bi=1%7D%5En%20%5Clog(Y_i!)%0A"></p>
+<p><strong>Analytical MLE.</strong> Differentiating with respect to <img src="https://latex.codecogs.com/png.latex?%5Clambda"> and setting equal to zero:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%5Cell%7D%7Bd%5Clambda%7D%20=%20-n%20+%20%5Cfrac%7B%5Csum_i%20Y_i%7D%7B%5Clambda%7D%20=%200%0A%5Cimplies%20%5Chat%7B%5Clambda%7D_%7B%5Ctext%7BMLE%7D%7D%20=%20%5Cfrac%7B1%7D%7Bn%7D%5Csum_i%20Y_i%20=%20%5Cbar%7BY%7D%0A"></p>
+<p>The MLE is simply the sample mean — sensible, since <img src="https://latex.codecogs.com/png.latex?%5Clambda"> <em>is</em> the population mean of a Poisson.</p>
+</section>
+<section id="coding-and-plotting-the-log-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="coding-and-plotting-the-log-likelihood">Coding and Plotting the Log-Likelihood</h3>
+<div id="45cd119a" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'patents'</span>].values</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> poisson_loglikelihood(lam, Y):</span>
+<span id="cb1-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Log-likelihood for Y ~ Poisson(lambda)."""</span></span>
+<span id="cb1-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> lam <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb1-6">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>np.inf</span>
+<span id="cb1-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>lam <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log(lam) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> gammaln(Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span></code></pre></div></div>
+</details>
+</div>
+<div id="831d99ec" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed_files/figure-html/cell-6-output-1.png" width="1025" height="531" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The curve has a single smooth peak. The maximum sits exactly at <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Clambda%7D%20=%20%5Cbar%7BY%7D">, as predicted analytically. Values of <img src="https://latex.codecogs.com/png.latex?%5Clambda"> that are too small assign too little probability to the many firms with multiple patents; values that are too large over-predict counts for the zero-and-one firms. The MLE balances these competing forces.</p>
+</section>
+<section id="numerical-confirmation" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-confirmation">Numerical Confirmation</h3>
+<div id="dc4d07ca" class="cell" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">result_simple <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> minimize(</span>
+<span id="cb2-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>poisson_loglikelihood(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], Y),</span>
+<span id="cb2-3">    x0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.0</span>],</span>
+<span id="cb2-4">    method<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Nelder-Mead'</span></span>
+<span id="cb2-5">)</span>
+<span id="cb2-6">lambda_mle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> result_simple.x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb2-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Numerical MLE:  λ̂ = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>lambda_mle<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.6f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb2-8"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Sample mean:    Ȳ = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>Y<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>mean()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.6f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Numerical MLE:  λ̂ = 3.684668
+Sample mean:    Ȳ = 3.684667</code></pre>
+</div>
+</div>
+<p>The numerical optimizer and the closed-form formula agree to six decimal places — as expected, since the log-likelihood has a unique global maximum and the analytical solution pins it down exactly.</p>
+<hr>
+</section>
+</section>
+<section id="poisson-regression" class="level2">
+<h2 class="anchored" data-anchor-id="poisson-regression">Poisson Regression</h2>
+<section id="from-a-single-lambda-to-firm-specific-rates" class="level3">
+<h3 class="anchored" data-anchor-id="from-a-single-lambda-to-firm-specific-rates">From a Single <img src="https://latex.codecogs.com/png.latex?%5Clambda"> to Firm-Specific Rates</h3>
+<p>The simple model treats every firm as exchangeable. To use our covariate information we extend it so that each firm <img src="https://latex.codecogs.com/png.latex?i"> has its own rate:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AY_i%20%5Csim%20%5Ctext%7BPoisson%7D(%5Clambda_i),%20%5Cqquad%20%5Clambda_i%20=%20%5Cexp(X_i'%5Cbeta)%0A"></p>
+<p>The exponential link is essential: the linear predictor <img src="https://latex.codecogs.com/png.latex?X_i'%5Cbeta"> can take any real value, but <img src="https://latex.codecogs.com/png.latex?%5Clambda_i"> must be strictly positive. Exponentiating guarantees positivity. Each coefficient <img src="https://latex.codecogs.com/png.latex?%5Cbeta_j"> is the log of a multiplicative factor on the expected count — a one-unit increase in <img src="https://latex.codecogs.com/png.latex?x_j"> multiplies <img src="https://latex.codecogs.com/png.latex?%5Clambda_i"> by <img src="https://latex.codecogs.com/png.latex?e%5E%7B%5Cbeta_j%7D">.</p>
+</section>
+<section id="the-regression-log-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="the-regression-log-likelihood">The Regression Log-Likelihood</h3>
+<p>Replacing the scalar <img src="https://latex.codecogs.com/png.latex?%5Clambda"> with <img src="https://latex.codecogs.com/png.latex?%5Cexp(X_i'%5Cbeta)">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cell(%5Cbeta)%20=%20%5Csum_%7Bi=1%7D%5En%20%5Cleft%5B-%5Cexp(X_i'%5Cbeta)%20+%20Y_i%5C,(X_i'%5Cbeta)%20-%20%5Clog(Y_i!)%5Cright%5D%0A"></p>
+<div id="aff3a3fb" class="cell" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> poisson_regression_loglikelihood(beta, Y, X):</span>
+<span id="cb4-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Log-likelihood for Poisson regression Y ~ Poisson(exp(X @ beta))."""</span></span>
+<span id="cb4-3">    eta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.clip(X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> beta, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># guard against overflow</span></span>
+<span id="cb4-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>np.exp(eta) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> eta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> gammaln(Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span></code></pre></div></div>
+</details>
+</div>
+</section>
+<section id="building-the-design-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="building-the-design-matrix">Building the Design Matrix</h3>
+<div id="ab1f9670" class="cell" data-execution_count="8">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># South is the omitted (reference) region</span></span>
+<span id="cb5-2">region_dummies <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.get_dummies(d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'region'</span>], drop_first<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>).drop(columns<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'South'</span>])</span>
+<span id="cb5-3"></span>
+<span id="cb5-4">X_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat([</span>
+<span id="cb5-5">    pd.Series(np.ones(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(d)), name<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'intercept'</span>),</span>
+<span id="cb5-6">    d[[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'age'</span>]],</span>
+<span id="cb5-7">    (d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'age'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>).rename(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'age_sq'</span>),</span>
+<span id="cb5-8">    region_dummies,</span>
+<span id="cb5-9">    d[[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'iscustomer'</span>]]</span>
+<span id="cb5-10">], axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb5-11"></span>
+<span id="cb5-12">X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X_df.values.astype(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>)</span>
+<span id="cb5-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Design matrix: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>X<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> firms x </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>X<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> columns"</span>)</span>
+<span id="cb5-14"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Columns: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>X_df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>columns<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>tolist()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Design matrix: 1500 firms x 8 columns
+Columns: ['intercept', 'age', 'age_sq', 'Midwest', 'Northeast', 'Northwest', 'Southwest', 'iscustomer']</code></pre>
+</div>
+</div>
+<p><strong>Why include age-squared?</strong> Patenting activity is unlikely to increase linearly with firm age throughout the entire life cycle. Young firms are still building R&amp;D pipelines; established mid-life firms often reach peak patent productivity; very old firms may have diversified away from core innovation. A quadratic in age captures this hump-shaped pattern without imposing a strong assumption about where the inflection lies.</p>
+<p><strong>Why drop one region dummy?</strong> The five region indicators sum to 1 for every observation — identical to the intercept column. Including all five would make the design matrix rank-deficient (perfect collinearity). Dropping <em>South</em> makes it the reference category: every other regional coefficient measures the difference in log-expected patents <em>relative to a Southern firm</em>, all else equal.</p>
+</section>
+<section id="estimating-hatbeta-with-scipy.optimize" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-hatbeta-with-scipy.optimize">Estimating <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta"> with <code>scipy.optimize</code></h3>
+<div id="79bdcec8" class="cell" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Warm-start from GLM to ensure numerical stability</span></span>
+<span id="cb7-2">glm_init <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sm.GLM(Y, X, family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sm.families.Poisson()).fit()</span>
+<span id="cb7-3"></span>
+<span id="cb7-4">result_reg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> minimize(</span>
+<span id="cb7-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> b: <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>poisson_regression_loglikelihood(b, Y, X),</span>
+<span id="cb7-6">    x0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>glm_init.params.copy(),</span>
+<span id="cb7-7">    method<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'L-BFGS-B'</span>,</span>
+<span id="cb7-8">    options<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'maxiter'</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10_000</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ftol'</span>: <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-12</span>}</span>
+<span id="cb7-9">)</span>
+<span id="cb7-10"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Optimizer converged: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>result_reg<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>success<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimizer converged: True</code></pre>
+</div>
+</div>
+<p><strong>Standard errors from the Hessian.</strong> Near the MLE the log-likelihood surface is locally quadratic, so the second-derivative matrix (Hessian) captures how sharply peaked it is in each parameter direction. A sharper peak means less uncertainty. The asymptotic covariance matrix of <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta"> is the inverse of the <em>negative</em> Hessian:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cwidehat%7B%5Coperatorname%7BVar%7D%7D(%5Chat%7B%5Cbeta%7D)%20%5Capprox%20%5Cleft%5B-%5Cnabla%5E2%20%5Cell(%5Chat%7B%5Cbeta%7D)%5Cright%5D%5E%7B-1%7D%0A"></p>
+<div id="3cf8bee4" class="cell" data-execution_count="10">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> neg_ll(b):</span>
+<span id="cb9-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>poisson_regression_loglikelihood(b, Y, X)</span>
+<span id="cb9-3"></span>
+<span id="cb9-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Approximate Hessian via finite differences</span></span>
+<span id="cb9-5">eps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-5</span></span>
+<span id="cb9-6">n_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(result_reg.x)</span>
+<span id="cb9-7">H   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((n_p, n_p))</span>
+<span id="cb9-8"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(n_p):</span>
+<span id="cb9-9">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> grad_i(b, i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>i):   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># capture i by value</span></span>
+<span id="cb9-10">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> approx_fprime(b, neg_ll, eps)[i]</span>
+<span id="cb9-11">    H[i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> approx_fprime(result_reg.x, grad_i, eps)</span>
+<span id="cb9-12"></span>
+<span id="cb9-13">se_optim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.sqrt(np.diag(np.linalg.inv(H)))</span></code></pre></div></div>
+</details>
+</div>
+</section>
+<section id="comparison-with-statsmodels-glm" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-with-statsmodels-glm">Comparison with <code>statsmodels</code> GLM</h3>
+<div id="01c1b34c" class="cell" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">glm_fit <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sm.GLM(Y, X, family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sm.families.Poisson()).fit()</span></code></pre></div></div>
+</details>
+</div>
+<div id="cd601bc8" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="12">
+<style>
+      .tbl1 { border-collapse: collapse; width: 100%; font-family: Georgia, serif; font-size: 13.5px; }
+      .tbl1 caption { font-size: 14px; font-weight: bold; text-align: left;
+                      padding: 6px 0 2px 0; color: #1e293b; }
+      .tbl1 .subtitle { font-size: 12px; font-weight: normal; color: #64748b; }
+      .tbl1 thead tr.spanner th { background: #1e3a5f; color: white;
+                                   text-align: center; padding: 5px 12px; }
+      .tbl1 thead tr.colnames th { background: #2d5282; color: white;
+                                    text-align: center; padding: 4px 12px;
+                                    font-weight: normal; font-style: italic; }
+      .tbl1 td { padding: 5px 12px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+      .tbl1 td:first-child { text-align: left; }
+      .tbl1 tr:nth-child(even) { background-color: #f8fafc; }
+      .tbl1 tr.highlight { background-color: #EFF6FF !important; font-weight: bold; }
+    </style>
+    
+<table class="tbl1 caption-top table table-sm table-striped small">
+<caption>Table 1: Poisson Regression Coefficients
+Manual optim() vs. statsmodels GLM</caption>
+<thead>
+<tr class="spanner header">
+<th rowspan="2" data-quarto-table-cell-role="th">Variable</th>
+<th colspan="2" data-quarto-table-cell-role="th">optim()</th>
+<th colspan="2" data-quarto-table-cell-role="th">statsmodels GLM</th>
+</tr>
+<tr class="colnames even">
+<th data-quarto-table-cell-role="th">β̂</th>
+<th data-quarto-table-cell-role="th">SE</th>
+<th data-quarto-table-cell-role="th">β̂</th>
+<th data-quarto-table-cell-role="th">SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td>-0.4524</td>
+<td>0.1812</td>
+<td>-0.4524</td>
+<td>0.1829</td>
+</tr>
+<tr class="even">
+<td>Age</td>
+<td>0.1486</td>
+<td>0.0137</td>
+<td>0.1486</td>
+<td>0.0139</td>
+</tr>
+<tr class="odd">
+<td>Age²</td>
+<td>-0.0030</td>
+<td>0.0003</td>
+<td>-0.0030</td>
+<td>0.0003</td>
+</tr>
+<tr class="even">
+<td>Midwest</td>
+<td>-0.0566</td>
+<td>0.0527</td>
+<td>-0.0566</td>
+<td>0.0527</td>
+</tr>
+<tr class="odd">
+<td>Northeast</td>
+<td>-0.0274</td>
+<td>0.0451</td>
+<td>-0.0274</td>
+<td>0.0451</td>
+</tr>
+<tr class="even">
+<td>Northwest</td>
+<td>-0.0741</td>
+<td>0.0551</td>
+<td>-0.0741</td>
+<td>0.0551</td>
+</tr>
+<tr class="odd">
+<td>Southwest</td>
+<td>-0.0060</td>
+<td>0.0487</td>
+<td>-0.0060</td>
+<td>0.0487</td>
+</tr>
+<tr class="highlight even">
+<td>Is Customer</td>
+<td>0.2076</td>
+<td>0.0309</td>
+<td>0.2076</td>
+<td>0.0309</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The coefficient estimates from <code>optim()</code> and <code>sm.GLM()</code> are <strong>identical to four decimal places</strong> — a reassuring sanity check. The standard errors are very close but not exactly equal: <code>sm.GLM()</code> uses the analytically computed expected Fisher information matrix, while our approach approximates the Hessian numerically via finite differences. This small discretization error explains the minor discrepancy, but it does not change any substantive conclusion.</p>
+</section>
+<section id="interpreting-the-coefficients" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-coefficients">Interpreting the Coefficients</h3>
+<div id="37f7144e" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="13">
+<style>
+      .tbl2 { border-collapse: collapse; width: 72%; font-family: Georgia, serif; font-size: 13.5px; }
+      .tbl2 caption { font-size: 14px; font-weight: bold; text-align: left;
+                      padding: 6px 0 2px 0; color: #1e293b; }
+      .tbl2 .subtitle { font-size: 12px; font-weight: normal; color: #64748b; }
+      .tbl2 thead th { background: #1e3a5f; color: white;
+                       text-align: center; padding: 6px 14px; }
+      .tbl2 td { padding: 5px 14px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+      .tbl2 td:first-child { text-align: left; }
+      .tbl2 tr:nth-child(even) { background-color: #f8fafc; }
+      .tbl2 tr.highlight { background-color: #EFF6FF !important; font-weight: bold; }
+    </style>
+    
+<table class="tbl2 caption-top table table-sm table-striped small">
+<caption>Table 2: GLM Coefficient Estimates
+With multiplicative effects exp(β̂)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Variable</th>
+<th data-quarto-table-cell-role="th">β̂</th>
+<th data-quarto-table-cell-role="th">SE</th>
+<th data-quarto-table-cell-role="th">exp(β̂)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td>-0.4524</td>
+<td>0.1829</td>
+<td>0.6361</td>
+</tr>
+<tr class="even">
+<td>Age</td>
+<td>0.1486</td>
+<td>0.0139</td>
+<td>1.1602</td>
+</tr>
+<tr class="odd">
+<td>Age²</td>
+<td>-0.0030</td>
+<td>0.0003</td>
+<td>0.9970</td>
+</tr>
+<tr class="even">
+<td>Midwest</td>
+<td>-0.0566</td>
+<td>0.0527</td>
+<td>0.9450</td>
+</tr>
+<tr class="odd">
+<td>Northeast</td>
+<td>-0.0274</td>
+<td>0.0451</td>
+<td>0.9730</td>
+</tr>
+<tr class="even">
+<td>Northwest</td>
+<td>-0.0741</td>
+<td>0.0551</td>
+<td>0.9285</td>
+</tr>
+<tr class="odd">
+<td>Southwest</td>
+<td>-0.0060</td>
+<td>0.0487</td>
+<td>0.9940</td>
+</tr>
+<tr class="highlight even">
+<td>Is Customer</td>
+<td>0.2076</td>
+<td>0.0309</td>
+<td>1.2307</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Because the model is log-linear, each <img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta_j"> is the log of a multiplicative factor on <img src="https://latex.codecogs.com/png.latex?%5Chat%5Clambda_i">; exponentiating gives the rate multiplier per unit change in <img src="https://latex.codecogs.com/png.latex?x_j">:</p>
+<ul>
+<li><strong>Age</strong> (<img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta%20=%200.149">, <img src="https://latex.codecogs.com/png.latex?e%5E%7B%5Chat%5Cbeta%7D%20%5Capprox%201.16">): expected patents rise with firm age — each additional year multiplies the rate by ~1.16, all else equal.</li>
+<li><strong>Age²</strong> (<img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta%20=%20-0.003">): the negative quadratic confirms a <strong>concave life-cycle pattern</strong> — patenting accelerates early but eventually levels off as firms mature.</li>
+<li><strong>Regional dummies</strong>: relative to the South, regional differences are modest and within roughly one standard error of zero across all regions.</li>
+<li><strong>Is Customer</strong> (<img src="https://latex.codecogs.com/png.latex?%5Chat%5Cbeta%20=%200.208">, <img src="https://latex.codecogs.com/png.latex?e%5E%7B%5Chat%5Cbeta%7D%20%5Capprox%201.23">): the key finding. Controlling for age and region, <strong>Blueprinty customers are expected to receive ~23% more patents</strong> than otherwise identical non-customers. The coefficient is more than six standard errors from zero.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="the-effect-of-blueprintys-software" class="level2">
+<h2 class="anchored" data-anchor-id="the-effect-of-blueprintys-software">The Effect of Blueprinty’s Software</h2>
+<section id="average-marginal-effect-via-counterfactual-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="average-marginal-effect-via-counterfactual-prediction">Average Marginal Effect via Counterfactual Prediction</h3>
+<p>The 23% multiplicative lift from the customer coefficient is harder to communicate than “X additional patents.” Moreover, the absolute effect varies across firms — a high-rate firm gains more patents in absolute terms from the same proportional boost than a low-rate firm does. To get a single interpretable number we use <strong>counterfactual prediction</strong>: predict each firm’s expected patent count <em>with</em> and <em>without</em> customer status, holding every other covariate at its observed value.</p>
+<div id="1014c4f1" class="cell" data-execution_count="14">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">beta_hat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> result_reg.x</span>
+<span id="cb11-2"></span>
+<span id="cb11-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Counterfactual 0: every firm set to non-customer</span></span>
+<span id="cb11-4">X0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X.copy()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> X0[:, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb11-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Counterfactual 1: every firm set to customer</span></span>
+<span id="cb11-6">X1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X.copy()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> X1[:, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb11-7"></span>
+<span id="cb11-8">y_hat_0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.exp(X0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> beta_hat)</span>
+<span id="cb11-9">y_hat_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.exp(X1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> beta_hat)</span>
+<span id="cb11-10"></span>
+<span id="cb11-11">ate <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(y_hat_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> y_hat_0)</span>
+<span id="cb11-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Average treatment effect: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ate<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> additional patents over 5 years"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Average treatment effect: 0.7928 additional patents over 5 years</code></pre>
+</div>
+</div>
+<div id="dcd51d6e" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed_files/figure-html/cell-16-output-1.png" width="1026" height="529" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The estimated <strong>average treatment effect is 0.793 additional patents</strong> over the five-year window. The distribution of firm-level effects is right-skewed — firms with higher base patent rates gain more in absolute terms — but the effect is positive for virtually every firm in the sample.</p>
+</section>
+<section id="what-this-analysis-does-and-does-not-establish" class="level3">
+<h3 class="anchored" data-anchor-id="what-this-analysis-does-and-does-not-establish">What This Analysis Does — and Does Not — Establish</h3>
+<p>The evidence is consistent with Blueprinty’s marketing claim: <strong>after controlling for firm age and region, customers patent at a meaningfully higher rate</strong>, gaining roughly 0.79 additional patents per five years. For a firm whose competitiveness depends on intellectual property protection, that is a non-trivial gain.</p>
+<p>That said, this is an <strong>observational study</strong>, not a randomized experiment. Firms self-selected into Blueprinty’s software, and we cannot rule out every unobserved confounder — quality of in-house patent counsel, R&amp;D budget, corporate culture around IP, or the intrinsic patentability of the firm’s technology. Any of these could partially explain the patent-count gap even after controlling for age and region.</p>
+<p>The honest conclusion: the data are <strong>consistent with</strong> Blueprinty’s software improving patent success, and the association survives controls for the most salient confounders. A causal claim would require either a randomized rollout or a credible natural experiment generating as-good-as-random variation in adoption.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed.html</guid>
+  <pubDate>Sun, 17 May 2026 07:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Replication of Angrist and Lavy (1999)</title>
   <dc:creator>Hari Chandana Vuppu</dc:creator>
