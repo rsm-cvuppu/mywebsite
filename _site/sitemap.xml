@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://rsm-cvuppu.github.io/mywebsite/about.html</loc>
-    <lastmod>2026-04-23T02:37:02.366Z</lastmod>
-  </url>
-  <url>
-    <loc>https://rsm-cvuppu.github.io/mywebsite/posts/hw2/index.html</loc>
-    <lastmod>2026-04-23T02:37:02.370Z</lastmod>
-  </url>
-  <url>
-    <loc>https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index.html</loc>
-    <lastmod>2026-04-23T02:37:02.366Z</lastmod>
+    <loc>https://rsm-cvuppu.github.io/mywebsite/index.html</loc>
+    <lastmod>2026-04-29T01:48:03.015Z</lastmod>
   </url>
   <url>
     <loc>https://rsm-cvuppu.github.io/mywebsite/posts/post-with-code/index.html</loc>
-    <lastmod>2026-04-23T02:37:02.370Z</lastmod>
+    <lastmod>2026-04-29T01:48:03.015Z</lastmod>
   </url>
   <url>
     <loc>https://rsm-cvuppu.github.io/mywebsite/posts/welcome/index.html</loc>
-    <lastmod>2026-04-23T02:37:02.370Z</lastmod>
+    <lastmod>2026-04-29T01:48:03.015Z</lastmod>
   </url>
   <url>
-    <loc>https://rsm-cvuppu.github.io/mywebsite/index.html</loc>
-    <lastmod>2026-04-23T02:37:02.366Z</lastmod>
+    <loc>https://rsm-cvuppu.github.io/mywebsite/about.html</loc>
+    <lastmod>2026-04-29T01:48:03.015Z</lastmod>
   </url>
   <url>
-    <loc>https://rsm-cvuppu.github.io/mywebsite/posts/hw3/hw3_completed.html</loc>
-    <lastmod>2026-05-18T03:55:25.434Z</lastmod>
+    <loc>https://rsm-cvuppu.github.io/mywebsite/posts/hw2/index.html</loc>
+    <lastmod>2026-04-29T01:48:03.015Z</lastmod>
+  </url>
+  <url>
+    <loc>https://rsm-cvuppu.github.io/mywebsite/posts/hw1/index.html</loc>
+    <lastmod>2026-04-29T02:21:07.227Z</lastmod>
   </url>
 </urlset>
