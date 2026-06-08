@@ -1,0 +1,215 @@
+---
+title: "Key Drivers Analysis"
+author: "Chandana Vuppu"
+date: 06/08/2026
+categories: [marketing analytics, key drivers]
+format:
+  html:
+    toc: true
+    code-fold: true
+execute:
+  freeze: auto
+  warning: false
+  message: false
+---
+
+## Overview
+
+This analysis identifies which product/brand attributes most strongly drive overall customer satisfaction. We use six complementary methods to measure importance, each capturing a different facet of the driver–outcome relationship.
+
+The **dependent variable** is `satisfaction`. The **independent variables** (drivers) are: `trust`, `build`, `differs`, `easy`, `appealing`, `rewarding`, `popular`, `service`, and `impact`.
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import r2_score
+from itertools import combinations
+from math import factorial
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load data
+df = pd.read_csv("data_for_drivers_analysis.csv")
+
+y_col = 'satisfaction'
+x_cols = ['trust', 'build', 'differs', 'easy', 'appealing',
+          'rewarding', 'popular', 'service', 'impact']
+
+X = df[x_cols].values
+y = df[y_col].values
+
+# Standardize predictors and outcome for regression-based methods
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+y_std = (y - y.mean()) / y.std()
+
+print(f"Dataset: {df.shape[0]} respondents, {len(x_cols)} drivers")
+print(f"Satisfaction mean: {y.mean():.2f}, std: {y.std():.2f}")
+```
+
+---
+
+## Methods
+
+### 1. Pearson Correlation
+
+Simple bivariate correlation between each driver and satisfaction. Easy to compute and interpret, but does not account for inter-correlations among drivers.
+
+```{python}
+pearson = df[x_cols].corrwith(df[y_col])
+```
+
+---
+
+### 2. Standardized Regression Coefficients
+
+Each predictor is standardized (mean = 0, sd = 1) before fitting OLS. Coefficients represent the change in satisfaction (in standard deviations) per one-SD change in the driver, holding all others constant. This controls for multicollinearity but can be unstable when predictors are highly correlated.
+
+```{python}
+reg_full = LinearRegression().fit(X_std, y_std)
+r2_full = r2_score(y_std, reg_full.predict(X_std))
+std_coefs = pd.Series(reg_full.coef_, index=x_cols)
+```
+
+---
+
+### 3. Drop-One (Usefulness)
+
+Incremental R² — the decrease in model fit when a single driver is removed. Measures the unique contribution of each driver beyond all others.
+
+$$\text{Usefulness}_j = R^2_{\text{full}} - R^2_{-j}$$
+
+```{python}
+drop_one = {}
+for i, col in enumerate(x_cols):
+    X_drop = np.delete(X_std, i, axis=1)
+    reg_drop = LinearRegression().fit(X_drop, y_std)
+    r2_drop = r2_score(y_std, reg_drop.predict(X_drop))
+    drop_one[col] = r2_full - r2_drop
+drop_one = pd.Series(drop_one)
+```
+
+---
+
+### 4. Shapley Values (Linear Regression, Custom Implementation)
+
+Shapley values from cooperative game theory fairly allocate the total R² among predictors. Each variable's Shapley value is its **weighted average marginal contribution** across all possible orderings of variables entering the model.
+
+$$\phi_j = \sum_{S \subseteq N \setminus \{j\}} \frac{|S|!(|N|-|S|-1)!}{|N|!} \left[ v(S \cup \{j\}) - v(S) \right]$$
+
+where $v(S)$ is the R² from the model using predictor subset $S$.
+
+**This is a custom implementation** — no external Shapley package is used.
+
+```{python}
+n = len(x_cols)
+
+def r2_subset(indices):
+    if len(indices) == 0:
+        return 0.0
+    Xs = X_std[:, indices]
+    reg_s = LinearRegression().fit(Xs, y_std)
+    return r2_score(y_std, reg_s.predict(Xs))
+
+shapley = {}
+for i, col in enumerate(x_cols):
+    others = [j for j in range(n) if j != i]
+    sv = 0.0
+    for size in range(n):
+        for subset in combinations(others, size):
+            weight = factorial(size) * factorial(n - size - 1) / factorial(n)
+            sv += weight * (r2_subset(list(subset) + [i]) - r2_subset(list(subset)))
+    shapley[col] = sv
+shapley = pd.Series(shapley)
+```
+
+---
+
+### 5. Johnson's Relative Weights
+
+Johnson's method decomposes R² into parts attributable to each predictor using an **orthogonalized basis** — the predictors are rotated into uncorrelated components via eigenvector decomposition, regression coefficients are obtained in that space, and contributions are mapped back to the original variables. This handles multicollinearity gracefully.
+
+```{python}
+from numpy.linalg import eig
+
+corr_XX = np.corrcoef(X_std.T)
+eigenvalues, eigenvectors = eig(corr_XX)
+eigenvalues = eigenvalues.real
+eigenvectors = eigenvectors.real
+
+Lam = np.diag(np.sqrt(eigenvalues))
+Lam_inv = np.diag(1.0 / np.sqrt(eigenvalues))
+Z = X_std @ eigenvectors @ Lam_inv  # orthogonal predictors
+
+reg_z = LinearRegression().fit(Z, y_std)
+beta_z = reg_z.coef_
+
+# Map contributions back and normalize to R2
+johnson_raw = (eigenvectors @ (Lam @ np.diag(beta_z**2)) @ eigenvectors.T).diagonal()
+johnson_normalized = johnson_raw / johnson_raw.sum() * r2_full
+johnson_normalized = pd.Series(johnson_normalized, index=x_cols)
+```
+
+---
+
+### 6. Random Forest — Mean Decrease in Impurity
+
+A Random Forest ensemble is fit and variable importance is measured as the mean decrease in node impurity (variance) across all trees when a variable is used for splitting. This captures non-linear and interaction effects.
+
+```{python}
+rf = RandomForestRegressor(n_estimators=500, random_state=42)
+rf.fit(X, y)
+rf_importance = pd.Series(rf.feature_importances_, index=x_cols)
+```
+
+---
+
+## Results Table
+
+```{python}
+results = pd.DataFrame({
+    'Pearson r':           pearson,
+    'Std. Reg. Coef.':     std_coefs,
+    'Drop-One':            drop_one,
+    'Shapley (LM, R²)':    shapley,
+    "Johnson's RW":        johnson_normalized,
+    'RF Impurity':         rf_importance,
+})
+
+# Sort by Shapley value descending (a balanced importance metric)
+results = results.sort_values('Shapley (LM, R²)', ascending=False)
+
+results.style \
+    .format("{:.4f}") \
+    .background_gradient(cmap='YlOrRd', axis=0) \
+    .set_caption(f"Key Drivers of Satisfaction  |  Full-model R² = {r2_full:.4f}") \
+    .set_table_styles([
+        {'selector': 'caption', 'props': [('font-size', '14px'), ('font-weight', 'bold'), ('padding', '8px')]},
+        {'selector': 'th', 'props': [('background-color', '#2c3e50'), ('color', 'white'), ('padding', '8px 12px')]},
+        {'selector': 'td', 'props': [('padding', '6px 12px')]},
+    ])
+```
+
+---
+
+## Interpretation
+
+```{python}
+print(f"Full-model R² = {r2_full:.4f}")
+print(f"\nTop driver by Shapley: {shapley.idxmax()} ({shapley.max():.4f})")
+print(f"Top driver by Pearson r: {pearson.idxmax()} ({pearson.max():.4f})")
+print(f"Top driver by Std. Coef.: {std_coefs.idxmax()} ({std_coefs.max():.4f})")
+print(f"Top driver by RF Impurity: {rf_importance.idxmax()} ({rf_importance.max():.4f})")
+```
+
+The six methods tell a consistent story:
+
+- **`impact`** and **`trust`** emerge as the top two drivers across nearly all methods. Both show the highest Pearson correlations, the largest standardized regression coefficients, and the largest drop-one and Shapley values.
+- **`service`** is a consistent third-tier driver, appearing important across all methods.
+- Methods **agree on the top drivers** but diverge on the middle tier, which is expected — Pearson captures total association (including shared variance), standardized coefficients capture unique effects, and Shapley/Johnson/RF each handle multicollinearity differently.
+- **Johnson's relative weights** distribute importance more evenly because they account for shared variance; `rewarding`, `easy`, and `service` rank relatively higher here than in uniqueness-focused metrics like drop-one.
+- The **Random Forest** ranks `trust`, `impact`, and `service` highest, consistent with the regression-based methods, and may capture mild non-linearities.
+- The overall R² of ~0.11 is modest, suggesting these binary attribute perceptions explain a meaningful but incomplete portion of satisfaction variance — other unmeasured factors (price, prior experience, etc.) also matter.
